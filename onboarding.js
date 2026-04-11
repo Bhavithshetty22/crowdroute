@@ -33,16 +33,22 @@ function injectStepStyles() {
       overflow: hidden;
       min-height: 22rem;
     }
+    [data-onboard-steps-viewport] [data-onboard-step].onboard-step-active {
+  position: relative !important;
+  min-height: unset;
+}
     [data-onboard-step] {
       position: absolute;
       inset: 0;
       opacity: 0;
       pointer-events: none;
       transform: translateX(18px);
+      padding-bottom: 2rem;
       transition: opacity var(--onboard-t, 320ms) ease,
         transform var(--onboard-t, 320ms) ease;
     }
     [data-onboard-step].onboard-step-active {
+      position: relative;
       opacity: 1;
       pointer-events: auto;
       transform: translateX(0);

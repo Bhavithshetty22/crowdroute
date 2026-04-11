@@ -3,44 +3,62 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content="Sign in or create your CrowdPilot AI account and complete personalized onboarding for the ultimate stadium experience."/>
 <title>CrowdPilot AI | Sign In & Onboarding</title>
-<link rel="icon" href="favicon.svg" type="image/svg+xml"/>
-<meta property="og:title" content="CrowdPilot AI | Sign in"/>
-<meta property="og:description" content="Sign in and personalize your stadium experience."/>
-<meta property="og:type" content="website"/>
-<meta name="twitter:card" content="summary_large_image"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="shared.css"/>
 <script id="tailwind-config">
   tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "primary":"#ffb693","primary-container":"#ff6b00","secondary":"#ffdb9d","secondary-container":"#feb700","tertiary":"#53e16f","tertiary-container":"#08b146","error":"#ffb4ab","error-container":"#93000a","surface":"#0a0a0a","surface-dim":"#131313","surface-container-lowest":"#0e0e0e","surface-container-low":"#1c1b1b","surface-container":"#201f1f","surface-container-high":"#2a2a2a","surface-container-highest":"#353534","surface-bright":"#3a3939","on-surface":"#e5e2e1","background":"#0a0a0a","on-background":"#e5e2e1" }, fontFamily:{ headline:["Space Grotesk"], body:["Inter"] } } } };
 </script>
 <style>
-  .step-indicator { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; transition: all 0.3s; }
-  .step-active { background: #ff6b00; color: white; }
-  .step-done { background: #53e16f; color: #003911; }
-  .step-pending { background: rgba(255,255,255,0.05); color: #5a5552; border: 1px solid rgba(255,255,255,0.08); }
-  .pref-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; cursor: pointer; transition: all 0.3s; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; }
+  .headline-font { font-family: 'Space Grotesk', sans-serif; }
+
+  .pref-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
   .pref-card:hover { background: rgba(255,107,0,0.08); border-color: rgba(255,107,0,0.3); }
   .pref-card.selected { background: rgba(255,107,0,0.12); border-color: rgba(255,107,0,0.5); }
+
+  /* Pages */
   .page { display: none; }
   .page.active { display: block; }
+
+  /* Onboarding steps — NO position:absolute, just show/hide */
+  .onboard-step { display: none; }
+  .onboard-step.active { display: block; }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #1c1b1b; border: 1px solid rgba(255,255,255,0.12);
+    color: #e5e2e1; padding: 12px 20px; border-radius: 12px;
+    font-size: 13px; font-weight: 500; opacity: 0;
+    transition: opacity 0.3s; pointer-events: none; z-index: 9999;
+    white-space: nowrap;
+  }
+  #toast.show { opacity: 1; }
+  #toast.error { border-color: rgba(255,107,0,0.5); color: #ffb693; }
 </style>
 </head>
-<body class="bg-black min-h-screen selection:bg-primary-container selection:text-white">
-<a href="#main-content" class="cp-skip-link">Skip to main content</a>
-<div id="cp-global-loader" class="cp-global-loader" role="status" aria-live="polite"><div class="cp-global-loader__spinner" aria-hidden="true"></div><span class="cp-global-loader__text">Loading…</span></div>
+<body class="bg-black min-h-screen text-white">
+
+<div id="toast"></div>
 
 <div class="min-h-screen flex">
-  <!-- Left: Illustration Panel -->
+  <!-- Left Panel -->
   <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1530631673369-bc20fdb32369?w=900&q=80" class="absolute inset-0 w-full h-full object-cover opacity-30 scale-105" alt="Stadium atmosphere"/>
+    <img src="https://images.unsplash.com/photo-1530631673369-bc20fdb32369?w=900&q=80" class="absolute inset-0 w-full h-full object-cover opacity-30 scale-105" alt="Stadium"/>
     <div class="absolute inset-0 bg-gradient-to-r from-transparent to-black"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
     <div class="relative z-10 flex flex-col justify-between p-12">
-      <a href="index.html" class="flex items-center gap-2.5">
+      <a href="#" class="flex items-center gap-2.5">
         <div class="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center" style="box-shadow:0 0 24px rgba(255,107,0,0.4)">
           <span class="material-symbols-outlined text-white text-lg" style="font-variation-settings:'FILL' 1;">rocket_launch</span>
         </div>
@@ -68,232 +86,356 @@
     </div>
   </div>
 
-  <!-- Right: Auth+Onboarding Panel -->
-  <main id="main-content" class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
-    <div class="w-full max-w-md">
+  <!-- Right Panel — scrollable -->
+  <main class="w-full lg:w-1/2 overflow-y-auto flex flex-col">
+    <div class="min-h-full flex flex-col p-6 lg:p-12">
+      <div class="w-full max-w-md my-auto mx-auto py-8">
 
-      <!-- Page 1: Sign In -->
-      <div class="page active" id="page-signin">
-        <div class="mb-10">
-          <a href="index.html" class="inline-flex items-center gap-2 text-stone-500 hover:text-white text-sm glide mb-6">
-            <span class="material-symbols-outlined text-base">arrow_back</span> Back to home
-          </a>
-          <h1 class="text-4xl font-black headline-font mb-2">Welcome back.</h1>
-          <p class="text-stone-400">Sign in to your CrowdPilot account.</p>
-        </div>
-
-        <!-- Google Sign In -->
-        <button type="button" data-signin-show-onboarding class="w-full flex items-center justify-center gap-3 glass-card py-4 rounded-2xl mb-6 hover:bg-white/08 glide font-semibold text-sm border-white/10">
-          <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-          Continue with Google
-        </button>
-
-        <div class="flex items-center gap-4 mb-6">
-          <hr class="flex-1 border-white/08"/>
-          <span class="text-stone-600 text-xs font-bold uppercase tracking-widest">or</span>
-          <hr class="flex-1 border-white/08"/>
-        </div>
-
-        <form data-signin-email-form class="space-y-4">
-          <div>
-            <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Email Address</label>
-            <input type="email" placeholder="alex@stadium.ai" class="w-full bg-white/05 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
+        <!-- Page 1: Sign In -->
+        <div class="page active" id="page-signin">
+          <div class="mb-10">
+            <a href="#" class="inline-flex items-center gap-2 text-stone-500 hover:text-white text-sm mb-6 transition-colors">
+              <span class="material-symbols-outlined text-base">arrow_back</span> Back to home
+            </a>
+            <h1 class="text-4xl font-black headline-font mb-2">Welcome back.</h1>
+            <p class="text-stone-400">Sign in to your CrowdPilot account.</p>
           </div>
-          <div>
-            <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Password</label>
-            <input type="password" placeholder="••••••••" class="w-full bg-white/05 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
-          </div>
-          <div class="flex justify-between items-center text-sm">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" class="form-checkbox bg-white/05 border-white/10 rounded text-primary-container"/>
-              <span class="text-stone-400 text-xs">Remember me</span>
-            </label>
-            <a href="mailto:support@crowdpilot.ai?subject=Password%20reset" class="text-primary-container text-xs font-bold hover:underline">Forgot password?</a>
-          </div>
-          <button type="submit" class="w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 glide mt-2" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">
-            Sign In
+
+          <button type="button" id="btn-google-signin" class="w-full flex items-center justify-center gap-3 border border-white/10 bg-white/5 py-4 rounded-2xl mb-6 hover:bg-white/8 transition-all font-semibold text-sm">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+            Continue with Google
           </button>
-        </form>
-        <p class="text-center text-stone-500 text-xs mt-6">Don't have an account? <button type="button" data-signin-show-onboarding class="text-primary-container font-bold hover:underline">Create one</button></p>
-      </div>
 
-      <!-- Onboarding (wired by onboarding.js + signin.js) -->
-      <div class="page" id="page-onboarding">
-        <button type="button" data-signin-back class="inline-flex items-center gap-2 text-stone-500 hover:text-white text-sm glide mb-6">
-          <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_back</span> Back to sign in
-        </button>
-        <div id="onboarding-flow">
-          <div class="mb-6">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-2">Setup progress</p>
-            <div class="h-1.5 bg-white/08 rounded-full overflow-hidden">
-              <div id="signin-onboard-progress-fill" class="h-full bg-primary-container rounded-full transition-all duration-500" style="width:0%"></div>
-            </div>
+          <div class="flex items-center gap-4 mb-6">
+            <hr class="flex-1 border-white/10"/>
+            <span class="text-stone-600 text-xs font-bold uppercase tracking-widest">or</span>
+            <hr class="flex-1 border-white/10"/>
           </div>
-          <div data-onboard-steps-viewport class="relative" style="min-height:24rem">
-            <div data-onboard-step="seat" class="onboard-step-active">
-              <h1 class="text-3xl sm:text-4xl font-black headline-font mb-2">Your seat section</h1>
-              <p class="text-stone-400 mb-6 sm:mb-8 text-sm sm:text-base">Personalize crowd predictions, exits, and nearby facilities.</p>
-              <div class="grid grid-cols-3 gap-3 mb-6">
-                <button type="button" class="pref-card selected text-center" data-value="A" data-label="North Stand">
-                  <p class="text-2xl font-black headline-font text-primary-container">A</p>
-                  <p class="text-xs text-stone-400 mt-1">North Stand</p>
-                </button>
-                <button type="button" class="pref-card text-center" data-value="B" data-label="West Wing">
-                  <p class="text-2xl font-black headline-font">B</p>
-                  <p class="text-xs text-stone-400 mt-1">West Wing</p>
-                </button>
-                <button type="button" class="pref-card text-center" data-value="C" data-label="East Stand">
-                  <p class="text-2xl font-black headline-font">C</p>
-                  <p class="text-xs text-stone-400 mt-1">East Stand</p>
-                </button>
-                <button type="button" class="pref-card text-center" data-value="D" data-label="South Curve">
-                  <p class="text-2xl font-black headline-font">D</p>
-                  <p class="text-xs text-stone-400 mt-1">South Curve</p>
-                </button>
-                <button type="button" class="pref-card text-center" data-value="VIP" data-label="Premium Box">
-                  <p class="text-2xl font-black headline-font">VIP</p>
-                  <p class="text-xs text-stone-400 mt-1">Premium Box</p>
-                </button>
-                <button type="button" class="pref-card text-center" data-value="GA" data-label="General Admit.">
-                  <p class="text-2xl font-black headline-font">GA</p>
-                  <p class="text-xs text-stone-400 mt-1">General Admit.</p>
-                </button>
-              </div>
-              <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Row / seat (optional)</label>
-              <input data-onboard-seat-detail type="text" placeholder="e.g. B12 Row 4" class="w-full bg-white/05 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600 mb-6"/>
-              <button type="button" data-onboard-action="next" class="w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 glide" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
-            </div>
 
-            <div data-onboard-step="categories">
-              <h1 class="text-3xl sm:text-4xl font-black headline-font mb-2">What do you enjoy?</h1>
-              <p class="text-stone-400 mb-6 sm:mb-8 text-sm sm:text-base">We will tune recommendations to your favorites.</p>
-              <div class="grid grid-cols-2 gap-3 mb-6">
-                <button type="button" class="pref-card selected flex items-center gap-3 w-full text-left" data-value="Food &amp; Drinks">
-                  <span class="material-symbols-outlined text-primary-container" style="font-variation-settings:'FILL' 1;">restaurant</span>
-                  <span class="text-sm font-medium">Food &amp; Drinks</span>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Merchandise">
-                  <span class="material-symbols-outlined text-secondary-container" style="font-variation-settings:'FILL' 1;">local_mall</span>
-                  <span class="text-sm font-medium">Merchandise</span>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Beer &amp; Snacks">
-                  <span class="material-symbols-outlined text-tertiary" style="font-variation-settings:'FILL' 1;">sports_bar</span>
-                  <span class="text-sm font-medium">Beer &amp; Snacks</span>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Photo Spots">
-                  <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">photo_camera</span>
-                  <span class="text-sm font-medium">Photo Spots</span>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Parking Exit">
-                  <span class="material-symbols-outlined text-amber-400" style="font-variation-settings:'FILL' 1;">directions_car</span>
-                  <span class="text-sm font-medium">Parking Exit</span>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Accessibility">
-                  <span class="material-symbols-outlined text-blue-400" style="font-variation-settings:'FILL' 1;">accessible</span>
-                  <span class="text-sm font-medium">Accessibility</span>
-                </button>
-              </div>
-              <div class="flex gap-3">
-                <button type="button" data-onboard-action="back" class="flex-1 py-4 rounded-2xl font-bold text-sm border border-white/12 text-stone-300 hover:bg-white/05 glide">Back</button>
-                <button type="button" data-onboard-action="next" class="flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 glide" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
-              </div>
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Email Address</label>
+              <input type="email" placeholder="alex@stadium.ai" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
             </div>
-
-            <div data-onboard-step="route">
-              <h1 class="text-3xl sm:text-4xl font-black headline-font mb-2">Route preference</h1>
-              <p class="text-stone-400 mb-6 sm:mb-8 text-sm sm:text-base">How should we prioritize walking directions?</p>
-              <div class="space-y-3 mb-6">
-                <button type="button" class="pref-card selected flex items-center gap-4 w-full text-left" data-value="Fastest Route">
-                  <div class="w-12 h-12 bg-primary-container/15 rounded-xl flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-primary-container" style="font-variation-settings:'FILL' 1;">bolt</span>
-                  </div>
-                  <div>
-                    <p class="font-bold text-sm">Fastest Route</p>
-                    <p class="text-stone-500 text-xs">Minimize walking time</p>
-                  </div>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="Least Crowded">
-                  <div class="w-12 h-12 bg-tertiary/15 rounded-xl flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-tertiary" style="font-variation-settings:'FILL' 1;">groups</span>
-                  </div>
-                  <div>
-                    <p class="font-bold text-sm">Least Crowded</p>
-                    <p class="text-stone-500 text-xs">Quieter paths, may be longer</p>
-                  </div>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="Accessible Route">
-                  <div class="w-12 h-12 bg-blue-500/15 rounded-xl flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-blue-400" style="font-variation-settings:'FILL' 1;">accessible</span>
-                  </div>
-                  <div>
-                    <p class="font-bold text-sm">Accessible Route</p>
-                    <p class="text-stone-500 text-xs">Ramps, lifts, level paths</p>
-                  </div>
-                </button>
-              </div>
-              <div class="flex gap-3">
-                <button type="button" data-onboard-action="back" class="flex-1 py-4 rounded-2xl font-bold text-sm border border-white/12 text-stone-300 hover:bg-white/05 glide">Back</button>
-                <button type="button" data-onboard-action="next" class="flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 glide" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
-              </div>
+            <div>
+              <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Password</label>
+              <input type="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
             </div>
-
-            <div data-onboard-step="accessibility">
-              <h1 class="text-3xl sm:text-4xl font-black headline-font mb-2">Accessibility cues</h1>
-              <p class="text-stone-400 mb-6 sm:mb-8 text-sm sm:text-base">Match assistive routing in the app (same as Profile).</p>
-              <div class="space-y-3 mb-6">
-                <button type="button" class="pref-card selected flex items-center gap-4 w-full text-left" data-value="standard">
-                  <span class="material-symbols-outlined text-primary-container text-xl shrink-0" style="font-variation-settings:'FILL' 1;">person</span>
-                  <div><p class="font-bold text-sm">Standard</p><p class="text-stone-500 text-xs">Default stadium guidance</p></div>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="wheelchair_paths">
-                  <span class="material-symbols-outlined text-blue-400 text-xl shrink-0" style="font-variation-settings:'FILL' 1;">accessible</span>
-                  <div><p class="font-bold text-sm">Wheelchair-friendly paths</p><p class="text-stone-500 text-xs">Ramps &amp; lifts priority</p></div>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="hearing">
-                  <span class="material-symbols-outlined text-tertiary text-xl shrink-0" style="font-variation-settings:'FILL' 1;">hearing</span>
-                  <div><p class="font-bold text-sm">Hearing assistance cues</p><p class="text-stone-500 text-xs">Visual emphasis where useful</p></div>
-                </button>
-                <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="visual">
-                  <span class="material-symbols-outlined text-secondary-container text-xl shrink-0" style="font-variation-settings:'FILL' 1;">visibility</span>
-                  <div><p class="font-bold text-sm">Visual assistance cues</p><p class="text-stone-500 text-xs">High-contrast style hints</p></div>
-                </button>
-              </div>
-              <div class="flex gap-3">
-                <button type="button" data-onboard-action="back" class="flex-1 py-4 rounded-2xl font-bold text-sm border border-white/12 text-stone-300 hover:bg-white/05 glide">Back</button>
-                <button type="button" data-onboard-action="next" class="flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 glide" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
-              </div>
+            <div class="flex justify-between items-center text-sm">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="form-checkbox bg-white/5 border-white/10 rounded text-primary-container"/>
+                <span class="text-stone-400 text-xs">Remember me</span>
+              </label>
+              <a href="#" class="text-primary-container text-xs font-bold hover:underline">Forgot password?</a>
             </div>
-
-            <div data-onboard-step="summary">
-              <div class="text-center mb-6">
-                <div class="w-20 h-20 bg-tertiary/20 rounded-full flex items-center justify-center mx-auto mb-4" style="box-shadow:0 0 48px rgba(83,225,111,0.25)">
-                  <span class="material-symbols-outlined text-tertiary text-4xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
-                </div>
-                <h1 class="text-3xl font-black headline-font mb-2">You are all set</h1>
-                <p class="text-stone-400 text-sm">Review your choices, then enter the fan dashboard.</p>
-              </div>
-              <div class="glass-card p-5 rounded-2xl text-left mb-6">
-                <p class="text-xs text-stone-500 uppercase tracking-widest font-bold mb-3">Summary</p>
-                <div class="space-y-2 text-sm">
-                  <div class="flex justify-between gap-2"><span class="text-stone-400">Section</span><span class="font-bold text-primary-container text-right" data-summary="seatSection">—</span></div>
-                  <div class="flex justify-between gap-2"><span class="text-stone-400">Categories</span><span class="font-bold text-right" data-summary="favoriteCategories">—</span></div>
-                  <div class="flex justify-between gap-2"><span class="text-stone-400">Route</span><span class="font-bold text-right" data-summary="routePreference">—</span></div>
-                  <div class="flex justify-between gap-2"><span class="text-stone-400">Accessibility</span><span class="font-bold text-right" data-summary="accessibilityPreference">—</span></div>
-                </div>
-              </div>
-              <div class="flex flex-col gap-3">
-                <button type="button" data-onboard-action="complete" class="w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 glide" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Save &amp; open dashboard</button>
-                <button type="button" data-onboard-action="back" class="w-full py-3 rounded-2xl font-bold text-sm border border-white/12 text-stone-300 hover:bg-white/05 glide">Back</button>
-              </div>
-            </div>
+            <button type="button" id="btn-email-signin" class="w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all mt-2" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">
+              Sign In
+            </button>
           </div>
+          <p class="text-center text-stone-500 text-xs mt-6">Don't have an account? <button type="button" id="btn-create-account" class="text-primary-container font-bold hover:underline">Create one</button></p>
         </div>
-      </div>
 
+        <!-- Page 2: Onboarding -->
+        <div class="page" id="page-onboarding">
+          <button type="button" id="btn-back-signin" class="inline-flex items-center gap-2 text-stone-500 hover:text-white text-sm mb-6 transition-colors">
+            <span class="material-symbols-outlined text-base">arrow_back</span> Back to sign in
+          </button>
+
+          <!-- Progress bar -->
+          <div class="mb-8">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-stone-500 mb-2">Setup progress</p>
+            <div class="h-1.5 bg-white/8 rounded-full overflow-hidden">
+              <div id="progress-fill" class="h-full bg-primary-container rounded-full transition-all duration-500" style="width:20%"></div>
+            </div>
+          </div>
+
+          <!-- Step: Seat -->
+          <div class="onboard-step active" id="step-seat">
+            <h1 class="text-3xl font-black headline-font mb-2">Your seat section</h1>
+            <p class="text-stone-400 mb-8 text-sm">Personalize crowd predictions, exits, and nearby facilities.</p>
+            <div class="grid grid-cols-3 gap-3 mb-6">
+              <button type="button" class="pref-card text-center" data-value="A">
+                <p class="text-2xl font-black headline-font text-primary-container">A</p>
+                <p class="text-xs text-stone-400 mt-1">North Stand</p>
+              </button>
+              <button type="button" class="pref-card text-center" data-value="B">
+                <p class="text-2xl font-black headline-font">B</p>
+                <p class="text-xs text-stone-400 mt-1">West Wing</p>
+              </button>
+              <button type="button" class="pref-card text-center" data-value="C">
+                <p class="text-2xl font-black headline-font">C</p>
+                <p class="text-xs text-stone-400 mt-1">East Stand</p>
+              </button>
+              <button type="button" class="pref-card text-center" data-value="D">
+                <p class="text-2xl font-black headline-font">D</p>
+                <p class="text-xs text-stone-400 mt-1">South Curve</p>
+              </button>
+              <button type="button" class="pref-card text-center" data-value="VIP">
+                <p class="text-2xl font-black headline-font">VIP</p>
+                <p class="text-xs text-stone-400 mt-1">Premium Box</p>
+              </button>
+              <button type="button" class="pref-card text-center" data-value="GA">
+                <p class="text-2xl font-black headline-font">GA</p>
+                <p class="text-xs text-stone-400 mt-1">General Admit.</p>
+              </button>
+            </div>
+            <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Row / seat (optional)</label>
+            <input id="seat-detail" type="text" placeholder="e.g. B12 Row 4" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600 mb-6"/>
+            <button type="button" class="step-next w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+          </div>
+
+          <!-- Step: Categories -->
+          <div class="onboard-step" id="step-categories">
+            <h1 class="text-3xl font-black headline-font mb-2">What do you enjoy?</h1>
+            <p class="text-stone-400 mb-8 text-sm">We'll tune recommendations to your favorites.</p>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+              <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Food &amp; Drinks">
+                <span class="material-symbols-outlined text-primary-container" style="font-variation-settings:'FILL' 1;">restaurant</span>
+                <span class="text-sm font-medium">Food &amp; Drinks</span>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Merchandise">
+                <span class="material-symbols-outlined text-secondary-container" style="font-variation-settings:'FILL' 1;">local_mall</span>
+                <span class="text-sm font-medium">Merchandise</span>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Beer &amp; Snacks">
+                <span class="material-symbols-outlined text-tertiary" style="font-variation-settings:'FILL' 1;">sports_bar</span>
+                <span class="text-sm font-medium">Beer &amp; Snacks</span>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Photo Spots">
+                <span class="material-symbols-outlined text-primary" style="font-variation-settings:'FILL' 1;">photo_camera</span>
+                <span class="text-sm font-medium">Photo Spots</span>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Parking Exit">
+                <span class="material-symbols-outlined text-amber-400" style="font-variation-settings:'FILL' 1;">directions_car</span>
+                <span class="text-sm font-medium">Parking Exit</span>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-3 w-full text-left" data-value="Accessibility">
+                <span class="material-symbols-outlined text-blue-400" style="font-variation-settings:'FILL' 1;">accessible</span>
+                <span class="text-sm font-medium">Accessibility</span>
+              </button>
+            </div>
+            <div class="flex gap-3">
+              <button type="button" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+              <button type="button" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+            </div>
+          </div>
+
+          <!-- Step: Route -->
+          <div class="onboard-step" id="step-route">
+            <h1 class="text-3xl font-black headline-font mb-2">Route preference</h1>
+            <p class="text-stone-400 mb-8 text-sm">How should we prioritize walking directions?</p>
+            <div class="space-y-3 mb-6">
+              <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="Fastest Route">
+                <div class="w-12 h-12 bg-primary-container/15 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-primary-container" style="font-variation-settings:'FILL' 1;">bolt</span>
+                </div>
+                <div><p class="font-bold text-sm">Fastest Route</p><p class="text-stone-500 text-xs">Minimize walking time</p></div>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="Least Crowded">
+                <div class="w-12 h-12 bg-tertiary/15 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-tertiary" style="font-variation-settings:'FILL' 1;">groups</span>
+                </div>
+                <div><p class="font-bold text-sm">Least Crowded</p><p class="text-stone-500 text-xs">Quieter paths, may be longer</p></div>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="Accessible Route">
+                <div class="w-12 h-12 bg-blue-500/15 rounded-xl flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-blue-400" style="font-variation-settings:'FILL' 1;">accessible</span>
+                </div>
+                <div><p class="font-bold text-sm">Accessible Route</p><p class="text-stone-500 text-xs">Ramps, lifts, level paths</p></div>
+              </button>
+            </div>
+            <div class="flex gap-3">
+              <button type="button" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+              <button type="button" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+            </div>
+          </div>
+
+          <!-- Step: Accessibility -->
+          <div class="onboard-step" id="step-accessibility">
+            <h1 class="text-3xl font-black headline-font mb-2">Accessibility cues</h1>
+            <p class="text-stone-400 mb-8 text-sm">Match assistive routing in the app.</p>
+            <div class="space-y-3 mb-6">
+              <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="standard">
+                <span class="material-symbols-outlined text-primary-container text-xl shrink-0" style="font-variation-settings:'FILL' 1;">person</span>
+                <div><p class="font-bold text-sm">Standard</p><p class="text-stone-500 text-xs">Default stadium guidance</p></div>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="wheelchair_paths">
+                <span class="material-symbols-outlined text-blue-400 text-xl shrink-0" style="font-variation-settings:'FILL' 1;">accessible</span>
+                <div><p class="font-bold text-sm">Wheelchair-friendly paths</p><p class="text-stone-500 text-xs">Ramps &amp; lifts priority</p></div>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="hearing">
+                <span class="material-symbols-outlined text-tertiary text-xl shrink-0" style="font-variation-settings:'FILL' 1;">hearing</span>
+                <div><p class="font-bold text-sm">Hearing assistance cues</p><p class="text-stone-500 text-xs">Visual emphasis where useful</p></div>
+              </button>
+              <button type="button" class="pref-card flex items-center gap-4 w-full text-left" data-value="visual">
+                <span class="material-symbols-outlined text-secondary-container text-xl shrink-0" style="font-variation-settings:'FILL' 1;">visibility</span>
+                <div><p class="font-bold text-sm">Visual assistance cues</p><p class="text-stone-500 text-xs">High-contrast style hints</p></div>
+              </button>
+            </div>
+            <div class="flex gap-3">
+              <button type="button" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+              <button type="button" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+            </div>
+          </div>
+
+          <!-- Step: Summary -->
+          <div class="onboard-step" id="step-summary">
+            <div class="text-center mb-6">
+              <div class="w-20 h-20 bg-tertiary/20 rounded-full flex items-center justify-center mx-auto mb-4" style="box-shadow:0 0 48px rgba(83,225,111,0.25)">
+                <span class="material-symbols-outlined text-tertiary text-4xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
+              </div>
+              <h1 class="text-3xl font-black headline-font mb-2">You're all set</h1>
+              <p class="text-stone-400 text-sm">Review your choices, then enter the fan dashboard.</p>
+            </div>
+            <div class="bg-white/3 border border-white/8 p-5 rounded-2xl text-left mb-6">
+              <p class="text-xs text-stone-500 uppercase tracking-widest font-bold mb-3">Summary</p>
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between gap-2"><span class="text-stone-400">Section</span><span class="font-bold text-primary-container text-right" id="sum-seat">—</span></div>
+                <div class="flex justify-between gap-2"><span class="text-stone-400">Categories</span><span class="font-bold text-right" id="sum-categories">—</span></div>
+                <div class="flex justify-between gap-2"><span class="text-stone-400">Route</span><span class="font-bold text-right" id="sum-route">—</span></div>
+                <div class="flex justify-between gap-2"><span class="text-stone-400">Accessibility</span><span class="font-bold text-right" id="sum-accessibility">—</span></div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-3">
+              <button type="button" id="btn-complete" class="w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Save &amp; open dashboard</button>
+              <button type="button" class="step-back w-full py-3 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+            </div>
+          </div>
+
+        </div><!-- /page-onboarding -->
+      </div>
     </div>
   </main>
 </div>
 
-<script type="module" src="./signin.js"></script>
+<script>
+  // ── State ──────────────────────────────────────────────────────────
+  const state = { seat: null, categories: [], route: null, accessibility: null };
+  const STEPS = ['seat', 'categories', 'route', 'accessibility', 'summary'];
+  let currentStep = 0;
+
+  // ── Toast ──────────────────────────────────────────────────────────
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'show' + (type ? ' ' + type : '');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.className = '', 3000);
+  }
+
+  // ── Page switching ─────────────────────────────────────────────────
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  document.getElementById('btn-google-signin').onclick = () => showOnboarding();
+  document.getElementById('btn-email-signin').onclick = () => showOnboarding();
+  document.getElementById('btn-create-account').onclick = () => showOnboarding();
+  document.getElementById('btn-back-signin').onclick = () => showPage('page-signin');
+
+  function showOnboarding() {
+    showPage('page-onboarding');
+    goToStep(0);
+  }
+
+  // ── Step navigation ────────────────────────────────────────────────
+  function goToStep(index) {
+    document.querySelectorAll('.onboard-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + STEPS[index]).classList.add('active');
+    currentStep = index;
+    const pct = Math.round(((index + 1) / STEPS.length) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    // scroll right panel to top
+    document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Pref card selection ────────────────────────────────────────────
+  document.querySelectorAll('[id^="step-"]').forEach(stepEl => {
+    const multi = stepEl.id === 'step-categories';
+    stepEl.querySelectorAll('.pref-card').forEach(card => {
+      card.addEventListener('click', () => {
+        if (multi) {
+          card.classList.toggle('selected');
+        } else {
+          stepEl.querySelectorAll('.pref-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+        }
+      });
+    });
+  });
+
+  // ── Validation ─────────────────────────────────────────────────────
+  function validate(stepId) {
+    if (stepId === 'summary') return true;
+    const el = document.getElementById('step-' + stepId);
+    const selected = el.querySelectorAll('.pref-card.selected');
+    if (stepId === 'seat' && selected.length === 0) {
+      showToast('Choose your seat section to continue.', 'error'); return false;
+    }
+    if (stepId === 'categories' && selected.length === 0) {
+      showToast('Pick at least one category.', 'error'); return false;
+    }
+    if ((stepId === 'route' || stepId === 'accessibility') && selected.length === 0) {
+      showToast('Select an option to continue.', 'error'); return false;
+    }
+    return true;
+  }
+
+  // ── Collect state ──────────────────────────────────────────────────
+  function collect(stepId) {
+    const el = document.getElementById('step-' + stepId);
+    if (stepId === 'seat') {
+      const card = el.querySelector('.pref-card.selected');
+      state.seat = card ? card.dataset.value : null;
+    }
+    if (stepId === 'categories') {
+      state.categories = [...el.querySelectorAll('.pref-card.selected')].map(c => c.dataset.value);
+    }
+    if (stepId === 'route') {
+      const card = el.querySelector('.pref-card.selected');
+      state.route = card ? card.dataset.value : null;
+    }
+    if (stepId === 'accessibility') {
+      const card = el.querySelector('.pref-card.selected');
+      state.accessibility = card ? card.dataset.value : null;
+    }
+  }
+
+  // ── Next / Back buttons ────────────────────────────────────────────
+  document.querySelectorAll('.step-next').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const stepId = STEPS[currentStep];
+      if (!validate(stepId)) return;
+      collect(stepId);
+      if (currentStep < STEPS.length - 1) {
+        if (STEPS[currentStep + 1] === 'summary') renderSummary();
+        goToStep(currentStep + 1);
+      }
+    });
+  });
+
+  document.querySelectorAll('.step-back').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (currentStep > 0) goToStep(currentStep - 1);
+    });
+  });
+
+  // ── Summary ────────────────────────────────────────────────────────
+  function renderSummary() {
+    STEPS.forEach(id => collect(id));
+    document.getElementById('sum-seat').textContent = state.seat || '—';
+    document.getElementById('sum-categories').textContent = state.categories.length ? state.categories.join(', ') : '—';
+    document.getElementById('sum-route').textContent = state.route || '—';
+    document.getElementById('sum-accessibility').textContent = state.accessibility || '—';
+  }
+
+  document.getElementById('btn-complete').onclick = () => {
+    showToast('Onboarding complete. Welcome to CrowdPilot AI!');
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, 500);
+  };
+</script>
 </body>
 </html>
