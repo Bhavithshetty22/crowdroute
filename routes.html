@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="CrowdPilot AI Route Recommendations — compare fastest, least crowded, and accessible routes to any stadium destination."/>
+<title>CrowdPilot AI | Route Recommendations</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+<meta property="og:title" content="CrowdPilot AI | Routes"/>
+<meta property="og:description" content="Fastest, least crowded, and accessible routes to any stadium destination."/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<script id="tailwind-config">
+  tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "primary":"#ffb693","primary-container":"#ff6b00","secondary":"#ffdb9d","secondary-container":"#feb700","tertiary":"#53e16f","error":"#ffb4ab","error-container":"#93000a","surface-container-lowest":"#0e0e0e","surface-container-low":"#1c1b1b","surface-container":"#201f1f","surface-container-high":"#2a2a2a","on-surface":"#e5e2e1","background":"#0e0e0e" }, fontFamily:{ headline:["Space Grotesk"], body:["Inter"] } } } };
+</script>
+<style>
+  body { background: #0e0e0e; }
+  .route-card { background: rgba(28,27,27,0.85); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px; padding: 24px; cursor: pointer; transition: all 0.3s; }
+  .route-card:hover { transform: translateY(-4px); }
+  .route-card.selected { border-color: rgba(255,107,0,0.5); background: rgba(255,107,0,0.06) }
+  .route-card.selected-green { border-color: rgba(83,225,111,0.5); background: rgba(83,225,111,0.04); }
+  .route-card.selected-blue { border-color: rgba(96,165,250,0.5); background: rgba(96,165,250,0.04); }
+  .stat-pill { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 14px; }
+  .route-step { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .route-step:last-child { border-bottom: none; }
+  .step-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+</style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface">
+<a href="#main-content" class="cp-skip-link">Skip to main content</a>
+<div id="cp-global-loader" class="cp-global-loader" role="status" aria-live="polite"><div class="cp-global-loader__spinner" aria-hidden="true"></div><span class="cp-global-loader__text">Loading…</span></div>
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar hidden lg:flex flex-col h-screen fixed left-0 top-0 z-40">
+    <div class="p-6 border-b border-white/05">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center" style="box-shadow:0 0 20px rgba(255,107,0,0.35)">
+          <span class="material-symbols-outlined text-white text-lg" style="font-variation-settings:'FILL' 1;">rocket_launch</span>
+        </div>
+        <div>
+          <span class="text-base font-black headline-font block text-primary-container leading-none">CrowdPilot</span>
+          <span class="text-[9px] text-stone-500 uppercase tracking-widest">Routes</span>
+        </div>
+      </a>
+    </div>
+    <nav class="flex-1 p-4 space-y-1.5">
+      <a href="dashboard.html" class="sidebar-link"><span class="material-symbols-outlined">grid_view</span> Overview</a>
+      <a href="map.html" class="sidebar-link"><span class="material-symbols-outlined">map</span> Stadium Map</a>
+      <a href="assistant.html" class="sidebar-link"><span class="material-symbols-outlined">psychology</span> AI Assistant</a>
+      <a href="queue.html" class="sidebar-link"><span class="material-symbols-outlined">analytics</span> Queue Analytics</a>
+      <a href="routes.html" class="sidebar-link active"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">alt_route</span> Routes</a>
+      <a href="alerts.html" class="sidebar-link"><span class="material-symbols-outlined">notifications</span> Alerts</a>
+      <a href="emergency.html" class="sidebar-link" style="color:#ffb4ab"><span class="material-symbols-outlined" style="color:#ffb4ab">emergency</span> Emergency</a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main-content" class="flex-1 lg:ml-60 p-4 sm:p-6 lg:p-10">
+
+    <!-- HEADER -->
+    <div class="mb-8 lg:mb-10 flex items-start gap-2">
+      <button type="button" id="cp-menu-btn" class="cp-menu-btn lg:hidden shrink-0 mt-1" aria-label="Open navigation menu" aria-expanded="false" aria-controls="cp-mobile-drawer"><span class="material-symbols-outlined" aria-hidden="true">menu</span></button>
+      <div class="min-w-0">
+      <p class="text-xs text-stone-500 uppercase tracking-widest font-bold mb-2">Navigation</p>
+      <h1 class="text-3xl sm:text-4xl font-black headline-font">Route <span class="text-primary-container">Recommendations</span></h1>
+      <p class="text-stone-400 mt-1 text-sm">From Section B12 — choose your preferred path</p>
+      </div>
+    </div>
+
+    <!-- DESTINATION SELECTOR (pills from routes.js) -->
+    <div class="glass-card p-5 rounded-2xl mb-8 flex flex-wrap gap-3 items-center">
+      <p class="text-xs text-stone-500 font-bold uppercase tracking-widest mr-2">Destination:</p>
+      <div id="routes-dest-pills" class="flex flex-wrap gap-3 items-center"></div>
+    </div>
+
+    <div id="routes-cards-row" class="grid lg:grid-cols-3 gap-6 mb-8"></div>
+
+    <!-- ROUTE PREVIEW MAP + STEPS -->
+    <div class="grid lg:grid-cols-5 gap-6">
+      <div id="routes-map-preview" class="lg:col-span-3 glass-card rounded-3xl overflow-hidden relative min-h-64 cp-map-stack">
+        <img src="https://images.unsplash.com/photo-1524117074681-31bd4de22ad3?w=900&q=80" class="absolute inset-0 w-full h-full object-cover opacity-40 grayscale" alt="Stadium route preview"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+        <svg id="routes-preview-svg" class="absolute inset-0 w-full h-full" viewBox="0 0 700 400" preserveAspectRatio="none"></svg>
+        <div class="absolute bottom-5 left-5 glass-panel px-4 py-3 rounded-xl">
+          <p id="routes-preview-title" class="text-xs font-bold text-primary-container uppercase tracking-widest">⚡ Route Preview</p>
+          <p id="routes-preview-sub" class="text-[10px] text-stone-400 mt-0.5">Loading…</p>
+        </div>
+      </div>
+      <div class="lg:col-span-2 glass-card rounded-3xl p-6">
+        <h3 class="font-bold headline-font text-base mb-5">Step-by-Step</h3>
+        <div id="routes-steps-list"></div>
+        <button type="button" id="routes-start-nav" class="w-full bg-primary-container text-white py-3.5 rounded-xl font-bold text-sm hover:brightness-110 glide mt-4" aria-expanded="false">Start navigation</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<a href="assistant.html" class="fixed bottom-8 right-8 w-14 h-14 bg-primary-container text-white rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 glide z-50 max-lg:bottom-20" style="box-shadow:0 8px 32px rgba(255,107,0,0.4)" aria-label="Open AI assistant">
+  <span class="material-symbols-outlined text-2xl" style="font-variation-settings:'FILL' 1;" aria-hidden="true">support_agent</span>
+</a>
+
+<div id="cp-mobile-drawer" class="cp-mobile-drawer lg:hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation">
+  <div class="cp-mobile-drawer__backdrop"></div>
+  <div class="cp-mobile-drawer__panel">
+    <div class="flex items-center justify-between p-4 border-b border-white/10">
+      <span class="font-black headline-font text-primary-container">CrowdPilot</span>
+      <button type="button" id="cp-drawer-close" class="cp-menu-btn" aria-label="Close menu"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    </div>
+    <nav id="cp-drawer-nav" class="cp-mobile-drawer__nav" aria-label="Main pages"></nav>
+  </div>
+</div>
+
+<script type="module">
+  import { initPagePolish } from './polish.js';
+  import { initRoutes } from './routes.js';
+  initPagePolish();
+  initRoutes();
+</script>
+</body>
+</html>

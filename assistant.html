@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="CrowdPilot AI Assistant — your smart stadium companion with AI chat, voice input, and contextual recommendations."/>
+<title>CrowdPilot AI | Smart Assistant</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+<meta property="og:title" content="CrowdPilot AI | Assistant"/>
+<meta property="og:description" content="Your smart stadium companion — chat, tips, and live context."/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<script id="tailwind-config">
+  tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "primary":"#ffb693","primary-container":"#ff6b00","secondary":"#ffdb9d","secondary-container":"#feb700","tertiary":"#53e16f","error":"#ffb4ab","error-container":"#93000a","surface-container-lowest":"#0e0e0e","surface-container-low":"#1c1b1b","surface-container":"#201f1f","surface-container-high":"#2a2a2a","on-surface":"#e5e2e1","background":"#0e0e0e" }, fontFamily:{ headline:["Space Grotesk"], body:["Inter"] } } } };
+</script>
+<style>
+  body { background: #0e0e0e; overflow: hidden; }
+  .chat-bubble-ai { background: rgba(32,31,31,0.6); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.06); border-radius: 24px 24px 24px 4px; }
+  .chat-bubble-user { background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.25); border-radius: 24px 24px 4px 24px; }
+  .suggestion-chip { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 99px; padding: 8px 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; color: #736c69; }
+  .suggestion-chip:hover { background: rgba(255,107,0,0.12); border-color: rgba(255,107,0,0.35); color: #ff6b00; transform: translateY(-2px); }
+  .voice-pulse { animation: voice-anim 1.2s ease-in-out infinite; }
+  @keyframes voice-anim { 0%,100%{box-shadow:0 0 0 0 rgba(255,107,0,0.4)} 50%{box-shadow:0 0 0 16px rgba(255,107,0,0)} }
+  .typing-indicator span { width: 6px; height: 6px; background: rgba(255,107,0,0.5); border-radius: 50%; display: inline-block; margin: 0 2px; }
+  .typing-indicator span:nth-child(1) { animation: typing 1.4s ease-in-out infinite 0s; }
+  .typing-indicator span:nth-child(2) { animation: typing 1.4s ease-in-out infinite 0.2s; }
+  .typing-indicator span:nth-child(3) { animation: typing 1.4s ease-in-out infinite 0.4s; }
+  @keyframes typing { 0%,100%{opacity:0.2;transform:scale(0.8)} 50%{opacity:1;transform:scale(1.2)} }
+  .context-card { background: rgba(42,42,42,0.5); border: 1px solid rgba(255,107,0,0.1); border-radius: 16px; transition: border-color 0.3s; }
+  .context-card:hover { border-color: rgba(255,107,0,0.35); }
+</style>
+</head>
+<body class="text-on-surface">
+<a href="#main-content" class="cp-skip-link">Skip to main content</a>
+<div id="cp-global-loader" class="cp-global-loader" role="status" aria-live="polite"><div class="cp-global-loader__spinner" aria-hidden="true"></div><span class="cp-global-loader__text">Loading…</span></div>
+<div class="flex h-screen overflow-hidden min-h-0">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar hidden lg:flex flex-col h-screen shrink-0">
+    <div class="p-6 border-b border-white/05">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center" style="box-shadow:0 0 20px rgba(255,107,0,0.35)">
+          <span class="material-symbols-outlined text-white text-lg" style="font-variation-settings:'FILL' 1;">rocket_launch</span>
+        </div>
+        <div>
+          <span class="text-base font-black headline-font block text-primary-container leading-none">CrowdPilot</span>
+          <span class="text-[9px] text-stone-500 uppercase tracking-widest">AI Assistant</span>
+        </div>
+      </a>
+    </div>
+    <nav class="flex-1 p-4 space-y-1.5">
+      <a href="dashboard.html" class="sidebar-link"><span class="material-symbols-outlined">grid_view</span> Overview</a>
+      <a href="map.html" class="sidebar-link"><span class="material-symbols-outlined">map</span> Stadium Map</a>
+      <a href="assistant.html" class="sidebar-link active"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">psychology</span> AI Assistant</a>
+      <a href="queue.html" class="sidebar-link"><span class="material-symbols-outlined">analytics</span> Queue Analytics</a>
+      <a href="routes.html" class="sidebar-link"><span class="material-symbols-outlined">alt_route</span> Routes</a>
+      <a href="alerts.html" class="sidebar-link"><span class="material-symbols-outlined">notifications</span> Alerts</a>
+      <a href="emergency.html" class="sidebar-link" style="color:#ffb4ab"><span class="material-symbols-outlined" style="color:#ffb4ab">emergency</span> Emergency</a>
+    </nav>
+    <!-- Live Stats Sidebar -->
+    <div class="p-4 border-t border-white/05 space-y-3">
+      <p class="text-[10px] text-stone-500 uppercase tracking-widest font-bold">Live Feed</p>
+      <div class="space-y-2">
+        <div class="glass-card p-3 rounded-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[10px] text-stone-500 uppercase font-bold">Crowd Density</span>
+            <span class="text-sm font-black text-primary-container">84%</span>
+          </div>
+          <div class="h-1.5 bg-white/05 rounded-full"><div class="h-full bg-primary-container w-4/5 rounded-full" style="box-shadow:0 0 8px rgba(255,107,0,0.4)"></div></div>
+        </div>
+        <div class="glass-card p-3 rounded-xl">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[10px] text-stone-500 uppercase font-bold">Inflow Speed</span>
+            <span class="text-sm font-black text-tertiary">422 p/m</span>
+          </div>
+          <div class="h-1.5 bg-white/05 rounded-full"><div class="h-full bg-tertiary rounded-full" style="width:65%;box-shadow:0 0 8px rgba(83,225,111,0.4)"></div></div>
+        </div>
+        <div class="glass-card p-3 rounded-xl border-orange-500/20" style="border-color:rgba(255,107,0,0.2)">
+          <p class="text-xs font-bold text-white mb-1">⚠️ Queue Alert</p>
+          <p class="text-[10px] text-stone-400 leading-relaxed">Concourse B restrooms approaching peak. Rerouting suggested.</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CHAT CANVAS -->
+  <main id="main-content" class="flex-1 flex flex-col overflow-hidden relative min-h-0">
+    <!-- BG glows -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute -top-24 -right-12 w-96 h-96 bg-primary-container/05 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-24 -left-12 w-80 h-80 bg-tertiary/04 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- CHAT HEADER -->
+    <div class="flex items-center justify-between gap-3 px-4 sm:px-8 py-4 sm:py-5 border-b border-white/05 bg-black/40 backdrop-blur-xl z-10 shrink-0">
+      <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+        <button type="button" id="cp-menu-btn" class="cp-menu-btn lg:hidden shrink-0" aria-label="Open navigation menu" aria-expanded="false" aria-controls="cp-mobile-drawer"><span class="material-symbols-outlined" aria-hidden="true">menu</span></button>
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-800 rounded-2xl flex items-center justify-center shrink-0" style="box-shadow:0 4px 20px rgba(255,107,0,0.3)">
+          <span class="material-symbols-outlined text-white text-lg sm:text-xl" style="font-variation-settings:'FILL' 1;" aria-hidden="true">psychology</span>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-sm sm:text-base font-black headline-font flex flex-wrap items-center gap-2">
+            <span class="truncate">CrowdPilot Companion</span>
+            <span class="text-[10px] bg-primary-container/20 text-primary-container px-2 py-0.5 rounded-full border border-primary-container/30 font-bold uppercase tracking-widest shrink-0">v4 Pro</span>
+          </h1>
+          <p class="text-xs text-stone-500 truncate">Section B12 · North Concourse</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 px-3 py-1.5 glass-card rounded-full">
+          <span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-primary-container">Live Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MESSAGES (populated by assistant.js; welcome + history restore) -->
+    <div class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 space-y-8 relative z-10 min-h-0" id="chat-messages" role="log" aria-live="polite" aria-relevant="additions" aria-label="Chat messages">
+
+      <div id="cp-assistant-skeleton" class="space-y-6 cp-skeleton-layer" aria-hidden="true">
+        <div class="flex gap-4 max-w-4xl cp-stagger-in">
+          <div class="w-10 h-10 rounded-full cp-skel shrink-0"></div>
+          <div class="flex-1 cp-skel h-20 rounded-2xl max-w-xl"></div>
+        </div>
+        <div class="flex gap-4 max-w-4xl ml-auto flex-row-reverse cp-stagger-in" style="animation-delay:0.08s">
+          <div class="w-10 h-10 rounded-full cp-skel shrink-0"></div>
+          <div class="w-full max-w-xs cp-skel h-16 rounded-2xl"></div>
+        </div>
+        <div class="flex gap-4 max-w-4xl cp-stagger-in" style="animation-delay:0.16s">
+          <div class="w-10 h-10 rounded-full cp-skel shrink-0"></div>
+          <div class="flex-1 cp-skel h-28 rounded-2xl max-w-xl"></div>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="flex gap-5 max-w-4xl items-start" id="typing-indicator">
+        <div class="w-10 h-10 rounded-full bg-surface-container border border-white/08 flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-primary-container text-xl" style="font-variation-settings:'FILL' 1;">smart_toy</span>
+        </div>
+        <div class="chat-bubble-ai px-6 py-4">
+          <div class="typing-indicator flex items-center gap-1">
+            <span></span><span></span><span></span>
+            <span class="ml-3 text-[10px] font-bold uppercase tracking-widest text-stone-500">Assistant is thinking...</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- INPUT AREA -->
+    <div class="px-4 sm:px-6 lg:px-10 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 border-t border-white/05 bg-black/30 backdrop-blur-xl z-10 shrink-0">
+      <!-- Suggestion chips -->
+      <div class="flex flex-wrap gap-2 mb-4" id="assistant-suggestion-chips">
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="Where is the nearest washroom?" aria-label="Ask: nearest washroom">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">wc</span> Nearest washroom?
+        </button>
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="Which food stall has the shortest queue right now?" aria-label="Ask: shortest food queue">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">restaurant</span> Shortest food queue?
+        </button>
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="What is the fastest exit route from my section after the game?" aria-label="Ask: fastest exit route">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">logout</span> Fastest exit route?
+        </button>
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="Which gate is the least crowded right now?" aria-label="Ask: least crowded gate">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">door_front</span> Least crowded gate?
+        </button>
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="How is parking congestion looking right now?" aria-label="Ask: parking congestion">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">directions_car</span> Parking congestion?
+        </button>
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="Where are the emergency exits near section B12?" aria-label="Ask: emergency exits">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">emergency</span> Emergency exits?
+        </button>
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="When should I leave my seat to beat the halftime crowd?" aria-label="Ask: halftime crowd timing">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">schedule</span> Halftime crowd advice?
+        </button>
+        <button type="button" class="suggestion-chip flex items-center gap-2" data-assistant-chip data-prompt="What is the best accessible route to restrooms and food?" aria-label="Ask: accessible routes">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">accessible</span> Accessibility routes?
+        </button>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 mb-2 max-w-4xl text-[11px] text-stone-500">
+        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
+          <input type="checkbox" id="assistant-voice-autosend" class="rounded border-white/20 bg-white/05 text-primary-container focus:ring-primary-container focus:ring-offset-0 focus:ring-offset-transparent"/>
+          <span>Auto-send after voice</span>
+        </label>
+        <span id="assistant-voice-status" class="text-primary-container font-bold min-h-[1.25em]" aria-live="polite"></span>
+      </div>
+      <!-- Input box -->
+      <div class="relative group max-w-4xl">
+        <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-container/20 to-primary-container/10 rounded-3xl blur-xl opacity-0 group-focus-within:opacity-100 glide"></div>
+        <div class="glass-panel flex items-center p-2 rounded-3xl border border-white/08 relative focus-within:border-primary-container/40 glide">
+          <button type="button" class="p-3 text-stone-500 hover:text-primary-container glide" aria-label="Attach file (demo)">
+            <span class="material-symbols-outlined" aria-hidden="true">attach_file</span>
+          </button>
+          <input id="chat-input" type="text" placeholder="Ask your stadium companion anything..." data-assistant-input class="flex-1 bg-transparent border-none focus:ring-0 text-white placeholder-stone-600 py-3 px-2 font-medium text-sm" aria-label="Message to assistant" autocomplete="off"/>
+          <div class="flex items-center gap-2 pr-2">
+            <button type="button" id="voice-btn" class="w-11 h-11 rounded-2xl bg-white/05 flex items-center justify-center text-stone-400 hover:text-primary-container hover:bg-primary-container/10 glide" aria-pressed="false" aria-label="Start voice input">
+              <span class="material-symbols-outlined" aria-hidden="true">mic</span>
+            </button>
+            <button type="button" id="assistant-send" class="w-12 h-12 rounded-2xl bg-primary-container text-white flex items-center justify-center hover:scale-105 active:scale-95 glide" style="box-shadow:0 4px 20px rgba(255,107,0,0.4)" aria-label="Send message">
+              <span class="material-symbols-outlined text-xl" style="font-variation-settings:'FILL' 1;" aria-hidden="true">send</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="cp-mobile-drawer" class="cp-mobile-drawer lg:hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation">
+  <div class="cp-mobile-drawer__backdrop"></div>
+  <div class="cp-mobile-drawer__panel">
+    <div class="flex items-center justify-between p-4 border-b border-white/10">
+      <span class="font-black headline-font text-primary-container">CrowdPilot</span>
+      <button type="button" id="cp-drawer-close" class="cp-menu-btn" aria-label="Close menu"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    </div>
+    <nav id="cp-drawer-nav" class="cp-mobile-drawer__nav" aria-label="Main pages"></nav>
+  </div>
+</div>
+
+<script type="module">
+  import { initPagePolish } from './polish.js';
+  import { initAssistant } from './assistant.js';
+  initPagePolish();
+  initAssistant({
+    messagesSelector: '#chat-messages',
+    inputSelector: '#chat-input',
+    sendButtonSelector: '#assistant-send',
+    chipSelector: '[data-assistant-chip]',
+    voiceButtonSelector: '#voice-btn',
+    voiceStatusSelector: '#assistant-voice-status',
+    voiceAutosendSelector: '#assistant-voice-autosend',
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+{
+  "destinations": [
+    {
+      "id": "food",
+      "label": "North Wing BBQ",
+      "icon": "restaurant",
+      "routes": {
+        "fastest": {
+          "walkMinutes": 3,
+          "distanceM": 210,
+          "congestion": "Medium",
+          "difficulty": "Easy",
+          "accessibility": "Stairs only",
+          "summary": "Via North Stairwell → Level 2 Concourse → Section A. Shortest path, moderate crowd in Level 2 corridor.",
+          "svgPath": "M 350 200 Q 280 170 220 140 Q 180 120 140 100",
+          "stroke": "#ff6b00",
+          "steps": [
+            { "title": "Start — Section B, Row 12", "subtitle": "Your current location", "icon": "my_location" },
+            { "title": "Head North on Main Concourse", "subtitle": "~60m walk · Low crowd density", "icon": "north" },
+            { "title": "Take North Stairwell to Level 2", "subtitle": "Clear, no queue", "icon": "stairs" },
+            { "title": "Turn left onto Level 2 Concourse", "subtitle": "~80m · Moderate density", "icon": "turn_left" },
+            { "title": "Arrive — North Wing BBQ", "subtitle": "Current wait: 2 minutes", "icon": "restaurant" }
+          ]
+        },
+        "least_crowded": {
+          "walkMinutes": 5,
+          "distanceM": 340,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Stairs only",
+          "summary": "Via East Service Corridor → Level 3 Walkway → Section A. Quieter path, longer distance.",
+          "svgPath": "M 350 200 Q 420 180 480 160 Q 540 150 600 120",
+          "stroke": "#53e16f",
+          "steps": [
+            { "title": "Start — Section B, Row 12", "subtitle": "Your current location", "icon": "my_location" },
+            { "title": "East service door", "subtitle": "Staff corridor · very low traffic", "icon": "door_front" },
+            { "title": "Level 3 walkway", "subtitle": "Wide lanes · low density", "icon": "directions_walk" },
+            { "title": "Descend at Section A ramp", "subtitle": "Spiral ramp · clear sightlines", "icon": "stairs" },
+            { "title": "Arrive — North Wing BBQ", "subtitle": "Approach from east plaza", "icon": "restaurant" }
+          ]
+        },
+        "accessible": {
+          "walkMinutes": 6,
+          "distanceM": 390,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Ramps & lifts",
+          "summary": "Via West Lift → Level 2 flat path → Section A. Wheelchair and mobility friendly.",
+          "svgPath": "M 350 200 Q 300 220 250 240 Q 200 220 160 200",
+          "stroke": "#60a5fa",
+          "steps": [
+            { "title": "Start — Section B, Row 12", "subtitle": "Your current location", "icon": "my_location" },
+            { "title": "West bank of lifts", "subtitle": "Priority elevator B", "icon": "elevator" },
+            { "title": "Level 2 flat ring", "subtitle": "No steps · wide turning", "icon": "accessible" },
+            { "title": "North plaza cut-through", "subtitle": "Automatic doors", "icon": "door_sliding" },
+            { "title": "Arrive — North Wing BBQ", "subtitle": "Ramp to stand entrance", "icon": "restaurant" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "washroom",
+      "label": "Level 2 WC",
+      "icon": "wc",
+      "routes": {
+        "fastest": {
+          "walkMinutes": 2,
+          "distanceM": 140,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Stairs only",
+          "summary": "Direct west link to Level 2 restrooms — shortest stairs run.",
+          "svgPath": "M 350 200 L 280 210 L 220 205",
+          "stroke": "#ff6b00",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "West concourse 40m", "subtitle": "Moderate flow", "icon": "west" },
+            { "title": "Level 2 WC cluster", "subtitle": "Usually shortest line", "icon": "wc" }
+          ]
+        },
+        "least_crowded": {
+          "walkMinutes": 4,
+          "distanceM": 260,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Mixed",
+          "summary": "South mezzanine restrooms — longer walk, often empty during play.",
+          "svgPath": "M 350 200 Q 380 240 420 280 Q 460 300 500 290",
+          "stroke": "#53e16f",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "South ramp", "subtitle": "Low traffic route", "icon": "south" },
+            { "title": "Mezzanine WC south", "subtitle": "Rarely queued mid-quarter", "icon": "wc" }
+          ]
+        },
+        "accessible": {
+          "walkMinutes": 3,
+          "distanceM": 200,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Ramps & lifts",
+          "summary": "Lift to Level 2 west — fully accessible WC bank.",
+          "svgPath": "M 350 200 L 320 195 L 290 200 L 260 198",
+          "stroke": "#60a5fa",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "Nearest lift west", "subtitle": "Braille controls", "icon": "elevator" },
+            { "title": "Level 2 accessible WC", "subtitle": "Companion space", "icon": "wc" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "gate",
+      "label": "Gate 9",
+      "icon": "logout",
+      "routes": {
+        "fastest": {
+          "walkMinutes": 6,
+          "distanceM": 420,
+          "congestion": "Medium",
+          "difficulty": "Easy",
+          "accessibility": "Stairs option",
+          "summary": "Fast plaza descent to Gate 9 — expect merge near plaza.",
+          "svgPath": "M 350 200 Q 400 240 460 280 Q 520 320 580 340",
+          "stroke": "#ff6b00",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "Main concourse east", "subtitle": "~200m", "icon": "east" },
+            { "title": "Plaza stairs / ramp split", "subtitle": "Follow Gate 9 signage", "icon": "fork_right" },
+            { "title": "Gate 9 vestibule", "subtitle": "Clearance varies post-game", "icon": "door_front" }
+          ]
+        },
+        "least_crowded": {
+          "walkMinutes": 8,
+          "distanceM": 510,
+          "congestion": "Low",
+          "difficulty": "Moderate",
+          "accessibility": "Longer walk",
+          "summary": "Loop behind team store to avoid main plaza pinch.",
+          "svgPath": "M 350 200 Q 320 230 300 270 Q 320 310 380 330 Q 450 340 520 335",
+          "stroke": "#53e16f",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "Behind team store", "subtitle": "Service lane", "icon": "storefront" },
+            { "title": "Gate 9 side entrance", "subtitle": "Lower peak density", "icon": "door_front" }
+          ]
+        },
+        "accessible": {
+          "walkMinutes": 7,
+          "distanceM": 460,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Ramps & lifts",
+          "summary": "Lift series to plaza level — ramp to Gate 9.",
+          "svgPath": "M 350 200 L 340 220 L 360 250 L 400 280 L 460 300",
+          "stroke": "#60a5fa",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "Plaza lifts", "subtitle": "Wide cab", "icon": "elevator" },
+            { "title": "Gate 9 ramp line", "subtitle": "Staff assist at peak", "icon": "accessible" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "parking",
+      "label": "Parking Lot C",
+      "icon": "local_parking",
+      "routes": {
+        "fastest": {
+          "walkMinutes": 9,
+          "distanceM": 620,
+          "congestion": "High",
+          "difficulty": "Moderate",
+          "accessibility": "Stairs heavy",
+          "summary": "Helix down to Lot C — fastest but congested near spiral.",
+          "svgPath": "M 350 200 Q 380 260 400 330 Q 420 400 440 450",
+          "stroke": "#ff6b00",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "Helix descent", "subtitle": "Watch merge traffic", "icon": "stairs" },
+            { "title": "Lot C podium", "subtitle": "Pay stations ahead", "icon": "local_parking" }
+          ]
+        },
+        "least_crowded": {
+          "walkMinutes": 11,
+          "distanceM": 720,
+          "congestion": "Medium",
+          "difficulty": "Moderate",
+          "accessibility": "Mixed",
+          "summary": "East spiral — fewer fans during exit surge.",
+          "svgPath": "M 350 200 Q 330 250 310 320 Q 300 400 290 460",
+          "stroke": "#53e16f",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "East spiral", "subtitle": "Longer, calmer", "icon": "trending_down" },
+            { "title": "Lot C east", "subtitle": "Exit to ring road", "icon": "local_parking" }
+          ]
+        },
+        "accessible": {
+          "walkMinutes": 10,
+          "distanceM": 680,
+          "congestion": "Medium",
+          "difficulty": "Easy",
+          "accessibility": "Lifts to garage",
+          "summary": "Lift bank to P2 then flat to Lot C accessible aisle.",
+          "svgPath": "M 350 200 L 360 230 L 370 280 L 385 340 L 400 400",
+          "stroke": "#60a5fa",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Current seat", "icon": "my_location" },
+            { "title": "Garage lifts", "subtitle": "P2 bridge", "icon": "elevator" },
+            { "title": "Lot C accessible aisle", "subtitle": "Wider bays", "icon": "accessible" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "emergency_exit",
+      "label": "Emergency Exit",
+      "icon": "emergency",
+      "routes": {
+        "fastest": {
+          "walkMinutes": 4,
+          "distanceM": 280,
+          "congestion": "Variable",
+          "difficulty": "Easy",
+          "accessibility": "Follow staff",
+          "summary": "Nearest illuminated exit — follow staff if directed.",
+          "svgPath": "M 350 200 L 300 180 L 250 160",
+          "stroke": "#ffb4ab",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Stay calm", "icon": "my_location" },
+            { "title": "Follow green exit signs", "subtitle": "Do not use lifts unless told", "icon": "emergency" },
+            { "title": "North stairwell A", "subtitle": "Muster zone on plaza", "icon": "directions_run" }
+          ]
+        },
+        "least_crowded": {
+          "walkMinutes": 5,
+          "distanceM": 320,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Alternate path",
+          "summary": "Secondary exit via east service — use if main stair congested.",
+          "svgPath": "M 350 200 Q 400 190 450 185 Q 500 190 540 200",
+          "stroke": "#53e16f",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Listen for PA", "icon": "my_location" },
+            { "title": "East service door", "subtitle": "Staff escort possible", "icon": "door_front" },
+            { "title": "Secondary plaza exit", "subtitle": "Muster map in app", "icon": "map" }
+          ]
+        },
+        "accessible": {
+          "walkMinutes": 5,
+          "distanceM": 300,
+          "congestion": "Low",
+          "difficulty": "Easy",
+          "accessibility": "Evac chair zones",
+          "summary": "Evacuation lift protocol — only when activated by staff.",
+          "svgPath": "M 350 200 L 345 210 L 340 225 L 335 240",
+          "stroke": "#60a5fa",
+          "steps": [
+            { "title": "Start — Section B12", "subtitle": "Wait for staff", "icon": "my_location" },
+            { "title": "Priority evac lift", "subtitle": "When activated", "icon": "elevator" },
+            { "title": "Accessible muster B", "subtitle": "Stay in sightline", "icon": "accessible" }
+          ]
+        }
+      }
+    }
+  ],
+  "mapOverlay": {
+    "pins": [
+      { "id": "you", "kind": "you", "leftPct": 50, "topPct": 50, "label": "YOU — B12", "tooltip": "Your current seat location" },
+      { "id": "pin-food", "kind": "food", "leftPct": 30, "topPct": 33, "label": "B-4 Grill", "tooltip": "North Wing BBQ · typical wait 2–6 min" },
+      { "id": "pin-wc", "kind": "washroom", "leftPct": 65, "topPct": 25, "label": "WC Level 2", "tooltip": "West bank restrooms · accessible stalls" },
+      { "id": "pin-gate", "kind": "gate", "leftPct": 80, "topPct": 70, "label": "Gate 9", "tooltip": "Fast exit · rideshare pickup nearby" },
+      { "id": "pin-emergency", "kind": "emergency", "leftPct": 20, "topPct": 70, "label": "Emergency Exit", "tooltip": "North stairwell A · follow green signs" },
+      { "id": "pin-parking", "kind": "parking", "leftPct": 45, "topPct": 80, "label": "Lot C", "tooltip": "South garage · post-game delays common" }
+    ],
+    "paths": {
+      "fastest": "M 500 300 Q 400 250 300 200 Q 250 180 200 150",
+      "least_crowded": "M 500 300 Q 550 280 600 260 Q 620 300 580 340",
+      "accessible": "M 500 300 L 480 320 L 460 340 L 440 360 L 420 380"
+    }
+  }
+}

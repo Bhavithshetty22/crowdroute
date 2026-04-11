@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="description" content="CrowdPilot AI Profile & Settings — manage your seat information, preferences, notifications, and account security."/>
+<title>CrowdPilot AI | Profile & Settings</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+<meta property="og:title" content="CrowdPilot AI | Profile"/>
+<meta property="og:description" content="Seat, preferences, notifications, and accessibility settings."/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="shared.css"/>
+<script id="tailwind-config">
+  tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "primary":"#ffb693","primary-container":"#ff6b00","secondary":"#ffdb9d","secondary-container":"#feb700","tertiary":"#53e16f","error":"#ffb4ab","error-container":"#93000a","surface-container-lowest":"#0e0e0e","surface-container-low":"#1c1b1b","surface-container":"#201f1f","surface-container-high":"#2a2a2a","on-surface":"#e5e2e1","background":"#0e0e0e" }, fontFamily:{ headline:["Space Grotesk"], body:["Inter"] } } } };
+</script>
+<style>
+  body { background: #0e0e0e; }
+  .settings-section { background: rgba(28,27,27,0.7); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 24px; }
+  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .settings-row:last-child { border-bottom: none; }
+  .toggle { width: 48px; height: 26px; background: rgba(255,255,255,0.08); border-radius: 99px; position: relative; cursor: pointer; transition: background 0.3s; }
+  .toggle.on { background: #ff6b00; }
+  .toggle::after { content:''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.3s; }
+  .toggle.on::after { transform: translateX(22px); }
+  .pref-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 12px 14px; cursor: pointer; transition: all 0.3s; }
+  .pref-card:hover { background: rgba(255,107,0,0.08); border-color: rgba(255,107,0,0.3); }
+  .pref-card.selected { background: rgba(255,107,0,0.12); border-color: rgba(255,107,0,0.5); }
+  #profile-seat-grid .pref-card .seat-code { color: #a8a29e; }
+  #profile-seat-grid .pref-card.selected .seat-code { color: #ff6b00; }
+</style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface">
+<a href="#main-content" class="cp-skip-link">Skip to main content</a>
+<div id="cp-global-loader" class="cp-global-loader" role="status" aria-live="polite"><div class="cp-global-loader__spinner" aria-hidden="true"></div><span class="cp-global-loader__text">Loading…</span></div>
+<div class="flex min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar hidden lg:flex flex-col h-screen fixed left-0 top-0 z-40">
+    <div class="p-6 border-b border-white/05">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <div class="w-9 h-9 bg-primary-container rounded-xl flex items-center justify-center" style="box-shadow:0 0 20px rgba(255,107,0,0.35)">
+          <span class="material-symbols-outlined text-white text-lg" style="font-variation-settings:'FILL' 1;">rocket_launch</span>
+        </div>
+        <div>
+          <span class="text-base font-black headline-font block text-primary-container leading-none">CrowdPilot</span>
+          <span class="text-[9px] text-stone-500 uppercase tracking-widest">Profile</span>
+        </div>
+      </a>
+    </div>
+    <nav class="flex-1 p-4 space-y-1.5">
+      <a href="dashboard.html" class="sidebar-link"><span class="material-symbols-outlined">grid_view</span> Overview</a>
+      <a href="map.html" class="sidebar-link"><span class="material-symbols-outlined">map</span> Stadium Map</a>
+      <a href="assistant.html" class="sidebar-link"><span class="material-symbols-outlined">psychology</span> AI Assistant</a>
+      <a href="queue.html" class="sidebar-link"><span class="material-symbols-outlined">analytics</span> Queue Analytics</a>
+      <a href="routes.html" class="sidebar-link"><span class="material-symbols-outlined">alt_route</span> Routes</a>
+      <a href="alerts.html" class="sidebar-link"><span class="material-symbols-outlined">notifications</span> Alerts</a>
+      <a href="emergency.html" class="sidebar-link" style="color:#ffb4ab"><span class="material-symbols-outlined" style="color:#ffb4ab">emergency</span> Emergency</a>
+    </nav>
+    <div class="p-4 border-t border-white/05">
+      <a href="profile.html" class="sidebar-link active"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">manage_accounts</span> Profile</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main id="main-content" class="flex-1 lg:ml-60 p-4 sm:p-6 lg:p-10">
+
+    <div class="flex items-start gap-2 mb-6 lg:mb-8">
+      <button type="button" id="cp-menu-btn" class="cp-menu-btn lg:hidden shrink-0 mt-1" aria-label="Open navigation menu" aria-expanded="false" aria-controls="cp-mobile-drawer"><span class="material-symbols-outlined" aria-hidden="true">menu</span></button>
+      <div class="min-w-0">
+        <p class="text-xs text-stone-500 uppercase tracking-widest font-bold mb-1">Account</p>
+        <h1 class="text-2xl sm:text-3xl font-black headline-font">Profile <span class="text-primary-container">&amp; Settings</span></h1>
+      </div>
+    </div>
+
+    <div id="profile-main" class="grid lg:grid-cols-3 gap-6 lg:gap-8">
+
+      <!-- LEFT COLUMN -->
+      <div class="lg:col-span-1 space-y-6">
+
+        <!-- Profile Card -->
+        <div class="settings-section text-center" style="border-color:rgba(255,107,0,0.15)">
+          <div class="relative inline-block mb-4">
+            <img id="profile-avatar-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80" class="w-24 h-24 rounded-full object-cover border-4 border-primary-container/30" alt="Profile"/>
+            <input type="file" id="profile-avatar-input" accept="image/*" class="hidden" tabindex="-1" aria-hidden="true"/>
+            <button type="button" id="profile-avatar-edit" class="absolute bottom-0 right-0 w-8 h-8 bg-primary-container rounded-full flex items-center justify-center" style="box-shadow:0 4px 12px rgba(255,107,0,0.4)" aria-label="Change profile photo">
+              <span class="material-symbols-outlined text-white text-sm" aria-hidden="true">edit</span>
+            </button>
+          </div>
+          <h2 class="text-xl font-black headline-font mb-1">Alex Johnson</h2>
+          <p class="text-stone-400 text-sm mb-1">alex@crowdpilot.ai</p>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/15 border border-primary-container/25 mt-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+            <span class="text-xs font-bold text-primary-container uppercase tracking-widest">Premium Fan</span>
+          </div>
+        </div>
+
+        <div class="settings-section" aria-labelledby="profile-demo-heading">
+          <h3 id="profile-demo-heading" class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500 mb-2">Demo mode</h3>
+          <p class="text-stone-400 text-xs mb-4 leading-relaxed">Hackathon demo: simulated live queue shifts, crowd density, and optional safety toasts. Turn off for a static experience.</p>
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" id="profile-demo-toggle" class="mt-0.5 w-5 h-5 shrink-0 rounded border-white/20 bg-white/05 text-primary-container focus:ring-2 focus:ring-primary-container focus:ring-offset-0 focus:ring-offset-transparent" checked/>
+            <span class="text-sm font-medium text-stone-200 leading-snug">Enable live simulations</span>
+          </label>
+          <p class="text-[10px] text-stone-600 mt-3">Or set <code class="text-stone-500">localStorage.crowdpilot_demo</code> to <code class="text-stone-500">false</code>.</p>
+        </div>
+
+        <div class="settings-section" aria-labelledby="profile-gemini-heading">
+          <h3 id="profile-gemini-heading" class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500 mb-2">Gemini API (optional)</h3>
+          <p class="text-stone-400 text-xs mb-3 leading-relaxed">Paste a <a href="https://aistudio.google.com/apikey" class="text-primary-container font-bold hover:underline" target="_blank" rel="noopener noreferrer">Google AI Studio</a> key to power the Assistant with live Gemini responses. Stored only in this browser.</p>
+          <form onsubmit="event.preventDefault()">
+            <label class="text-[10px] text-stone-500 uppercase font-bold block mb-1" for="profile-gemini-key">API key</label>
+            <input id="profile-gemini-key" type="password" autocomplete="off" placeholder="AIza…" class="w-full bg-white/05 border border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary-container placeholder:text-stone-600 font-mono"/>
+          </form>
+          <p class="text-[10px] text-stone-600 mt-2">Clear the field and save to use the built-in local assistant only.</p>
+        </div>
+
+        <!-- Seat Info -->
+        <div class="settings-section">
+          <h3 class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500 mb-4">Seat Information</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-primary-container/10 rounded-xl flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-primary-container text-sm" style="font-variation-settings:'FILL' 1;">event_seat</span>
+              </div>
+              <div>
+                <p class="text-[10px] text-stone-500 uppercase font-bold">Section</p>
+                <p id="profile-seat-section-display" class="font-bold text-sm">Not set</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-tertiary/10 rounded-xl flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings:'FILL' 1;">sports_basketball</span>
+              </div>
+              <div>
+                <p class="text-[10px] text-stone-500 uppercase font-bold">Ticket Type</p>
+                <p class="font-bold text-sm">Season Pass · Game 7</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-secondary-container/10 rounded-xl flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-secondary-container text-sm" style="font-variation-settings:'FILL' 1;">local_activity</span>
+              </div>
+              <div>
+                <p class="text-[10px] text-stone-500 uppercase font-bold">Events Attended</p>
+                <p class="font-bold text-sm">48 this season</p>
+              </div>
+            </div>
+          </div>
+          <label class="text-[10px] text-stone-500 uppercase font-bold block mt-4 mb-2">Section on map</label>
+          <div id="profile-seat-grid" class="grid grid-cols-3 gap-2 mb-3"></div>
+          <label class="text-[10px] text-stone-500 uppercase font-bold block mb-1">Row / seat (optional)</label>
+          <input id="profile-seat-detail" type="text" placeholder="e.g. Row 12, Seat 4" class="w-full bg-white/05 border border-white/10 rounded-xl px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary-container placeholder:text-stone-600"/>
+        </div>
+
+        <!-- Saved Routes (populated from routes.js → localStorage) -->
+        <div class="settings-section">
+          <h3 class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500 mb-4">Saved Routes</h3>
+          <div id="profile-saved-routes" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <div class="settings-section">
+          <div class="flex justify-between items-end mb-2">
+            <h3 class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500">Profile completion</h3>
+            <span id="profile-completion-label" class="text-lg font-black text-primary-container headline-font">0%</span>
+          </div>
+          <div class="h-2 rounded-full bg-white/08 overflow-hidden">
+            <div id="profile-completion-fill" class="h-full bg-primary-container rounded-full transition-all duration-500" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="font-bold headline-font mb-1">Category Preferences</h3>
+          <p class="text-stone-400 text-xs mb-5">Personalize recommendations (same values as onboarding)</p>
+          <div id="profile-category-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="font-bold headline-font mb-1">Route preference</h3>
+          <p class="text-stone-400 text-xs mb-4">Default routing style</p>
+          <div id="profile-route-prefs" class="space-y-3"></div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="font-bold headline-font mb-1">Accessibility preference</h3>
+          <p class="text-stone-400 text-xs mb-3">Assistive routing &amp; cues</p>
+          <select id="profile-accessibility-main" class="w-full bg-white/05 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:ring-1 focus:ring-primary-container">
+            <option value="standard">Standard</option>
+            <option value="wheelchair_paths">Wheelchair-friendly paths</option>
+            <option value="hearing">Hearing assistance cues</option>
+            <option value="visual">Visual assistance cues</option>
+          </select>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="font-bold headline-font mb-1">Favorite facilities</h3>
+          <p class="text-stone-400 text-xs mb-4">Highlight on maps and alerts</p>
+          <div id="profile-facilities-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div class="settings-section">
+          <h3 class="font-bold headline-font mb-5">Notification Settings</h3>
+          <div>
+            <div class="settings-row">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary-container text-lg" style="font-variation-settings:'FILL' 1;">notifications</span>
+                <div><p class="text-sm font-bold">Notifications</p><p class="text-xs text-stone-500">General stadium &amp; event alerts</p></div>
+              </div>
+              <div class="toggle on" role="switch" tabindex="0" data-toggle-key="notifications" aria-checked="true"></div>
+            </div>
+            <div class="settings-row">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-error text-lg" style="font-variation-settings:'FILL' 1;">emergency</span>
+                <div><p class="text-sm font-bold">Emergency alerts</p><p class="text-xs text-stone-500">Evacuation &amp; safety notifications</p></div>
+              </div>
+              <div class="toggle on" role="switch" tabindex="0" data-toggle-key="emergencyAlerts" aria-checked="true"></div>
+            </div>
+            <div class="settings-row">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-amber-400 text-lg" style="font-variation-settings:'FILL' 1;">local_parking</span>
+                <div><p class="text-sm font-bold">Parking alerts</p><p class="text-xs text-stone-500">Lots, exits, post-game traffic</p></div>
+              </div>
+              <div class="toggle on" role="switch" tabindex="0" data-toggle-key="parkingAlerts" aria-checked="true"></div>
+            </div>
+            <div class="settings-row">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-secondary-container text-lg" style="font-variation-settings:'FILL' 1;">hourglass_top</span>
+                <div><p class="text-sm font-bold">Queue alerts</p><p class="text-xs text-stone-500">Long lines &amp; wait spikes</p></div>
+              </div>
+              <div class="toggle on" role="switch" tabindex="0" data-toggle-key="queueAlerts" aria-checked="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="settings-section">
+            <h3 class="font-bold headline-font mb-5">Display accessibility</h3>
+            <div>
+              <div class="settings-row">
+                <div>
+                  <p class="text-sm font-bold">Wheelchair Mode</p>
+                  <p class="text-xs text-stone-500">Ramps & lifts only</p>
+                </div>
+                <div class="toggle" role="switch" tabindex="0" data-a11y-ui="wheelchair" aria-checked="false"></div>
+              </div>
+              <div class="settings-row">
+                <div>
+                  <p class="text-sm font-bold">Large Text</p>
+                  <p class="text-xs text-stone-500">Increase UI font size</p>
+                </div>
+                <div class="toggle" role="switch" tabindex="0" data-a11y-ui="largeText" aria-checked="false"></div>
+              </div>
+              <div class="settings-row">
+                <div>
+                  <p class="text-sm font-bold">High Contrast</p>
+                  <p class="text-xs text-stone-500">Increase visual contrast</p>
+                </div>
+                <div class="toggle" role="switch" tabindex="0" data-a11y-ui="highContrast" aria-checked="false"></div>
+              </div>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="font-bold headline-font mb-5">Security</h3>
+            <div>
+              <div class="settings-row">
+                <div>
+                  <p class="text-sm font-bold">Biometric Login</p>
+                  <p class="text-xs text-stone-500">Face ID / fingerprint</p>
+                </div>
+                <div class="toggle on" role="switch" tabindex="0" data-toggle-key="biometricLogin" aria-checked="true"></div>
+              </div>
+              <div class="settings-row">
+                <div>
+                  <p class="text-sm font-bold">Two-Factor Auth</p>
+                  <p class="text-xs text-stone-500">SMS verification enabled</p>
+                </div>
+                <div class="toggle on" role="switch" tabindex="0" data-toggle-key="twoFactorAuth" aria-checked="true"></div>
+              </div>
+              <div class="settings-row">
+                <div>
+                  <p class="text-sm font-bold">Session Timeout</p>
+                  <p class="text-xs text-stone-500">Auto logout after 4 hrs</p>
+                </div>
+                <div class="toggle" role="switch" tabindex="0" data-toggle-key="sessionTimeout" aria-checked="false"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <div class="flex flex-wrap gap-3 justify-between items-center">
+          <a href="index.html" class="flex items-center gap-2 px-6 py-3 bg-error/10 border border-error/25 text-error rounded-xl text-sm font-bold hover:bg-error/20 glide">
+            <span class="material-symbols-outlined text-base">logout</span>
+            Sign Out
+          </a>
+          <div class="flex gap-3">
+            <button type="button" id="profile-reset-btn" class="px-6 py-3 bg-white/06 border border-white/10 text-stone-300 rounded-xl text-sm font-bold hover:bg-white/10 glide">Reset Preferences</button>
+            <button type="button" id="profile-save-btn" class="px-6 py-3 bg-primary-container text-white rounded-xl text-sm font-bold hover:brightness-110 glide" style="box-shadow:0 4px 20px rgba(255,107,0,0.3)">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="cp-mobile-drawer" class="cp-mobile-drawer lg:hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation">
+  <div class="cp-mobile-drawer__backdrop"></div>
+  <div class="cp-mobile-drawer__panel">
+    <div class="flex items-center justify-between p-4 border-b border-white/10">
+      <span class="font-black headline-font text-primary-container">CrowdPilot</span>
+      <button type="button" id="cp-drawer-close" class="cp-menu-btn" aria-label="Close menu"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    </div>
+    <nav id="cp-drawer-nav" class="cp-mobile-drawer__nav" aria-label="Main pages"></nav>
+  </div>
+</div>
+
+<script type="module">
+  import { initPagePolish } from './polish.js';
+  import { initProfile } from './profile.js';
+  initPagePolish();
+  initProfile();
+</script>
+</body>
+</html>

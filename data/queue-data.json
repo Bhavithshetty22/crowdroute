@@ -1,0 +1,177 @@
+{
+  "food": {
+    "waitMinutes": 2,
+    "location": "Section B-4 Grill",
+    "barPct": 15
+  },
+  "washroom": {
+    "waitMinutes": 0,
+    "location": "Level 2 West",
+    "barPct": 8
+  },
+  "exit": {
+    "gate": "Gate 9",
+    "walkMinutes": 6,
+    "conditions": "clear",
+    "barPct": 20
+  },
+  "parking": {
+    "lot": "Lot C",
+    "congestionPct": 65,
+    "statusLabel": "Moderate delay",
+    "barPct": 65
+  },
+  "recommendedGate": {
+    "gate": "Gate B",
+    "hint": "Best for B12",
+    "barPct": 30
+  },
+  "halftime": {
+    "leaveMinutes": 10,
+    "avoidGate": "Gate 9",
+    "peakLabel": "halftime (19:15)"
+  },
+  "queueTrendPct": [30, 45, 35, 70, 60, 90, 85, 75],
+  "liveUpdated": "2s ago",
+  "flowComparison": {
+    "currentPct": 85,
+    "avgPct": 55,
+    "currentLabel": "8.2k ppl/hr",
+    "avgLabel": "5.4k ppl/hr",
+    "deltaNote": "+52% above baseline"
+  },
+  "facilities": [
+    {
+      "id": "food-turbo",
+      "category": "food",
+      "name": "Turbo Burgers",
+      "zone": "Sector 4-A · Popular",
+      "waitMinutes": 18,
+      "utilizationPct": 85,
+      "trend": "rising",
+      "peakTime": "19:15",
+      "throughput": "42 ord/hr",
+      "icon": "lunch_dining"
+    },
+    {
+      "id": "food-sushi",
+      "category": "food",
+      "name": "Zen Sushi",
+      "zone": "Sector 2-C · Fast",
+      "waitMinutes": 3,
+      "utilizationPct": 12,
+      "trend": "falling",
+      "peakTime": "20:45",
+      "throughput": "12 ord/hr",
+      "icon": "ramen_dining"
+    },
+    {
+      "id": "food-tacos",
+      "category": "food",
+      "name": "Velocity Tacos",
+      "zone": "Sector 5-G · High Vol",
+      "waitMinutes": 9,
+      "utilizationPct": 45,
+      "trend": "stable",
+      "peakTime": "19:30",
+      "throughput": "28 ord/hr",
+      "icon": "local_pizza"
+    },
+    {
+      "id": "food-bbq",
+      "category": "food",
+      "name": "North Wing BBQ",
+      "zone": "Section A · Food Stall",
+      "waitMinutes": 2,
+      "utilizationPct": 12,
+      "trend": "stable",
+      "peakTime": "19:00",
+      "throughput": "18 ord/hr",
+      "icon": "restaurant"
+    },
+    {
+      "id": "wc-l2w",
+      "category": "washroom",
+      "name": "Level 2 West WC",
+      "zone": "Section B · Washroom",
+      "waitMinutes": 0,
+      "utilizationPct": 6,
+      "trend": "stable",
+      "peakTime": "—",
+      "throughput": "6% utilization",
+      "icon": "wc"
+    },
+    {
+      "id": "wc-south",
+      "category": "washroom",
+      "name": "South Concourse WC",
+      "zone": "Gate 4 · Washroom",
+      "waitMinutes": 11,
+      "utilizationPct": 62,
+      "trend": "rising",
+      "peakTime": "Halftime",
+      "throughput": "Peak building",
+      "icon": "wc"
+    },
+    {
+      "id": "wc-102",
+      "category": "washroom",
+      "name": "Section 102 Restrooms",
+      "zone": "Upper bowl",
+      "waitMinutes": 6,
+      "utilizationPct": 38,
+      "trend": "falling",
+      "peakTime": "19:20",
+      "throughput": "Moderate flow",
+      "icon": "wc"
+    },
+    {
+      "id": "merch-3",
+      "category": "merchandise",
+      "name": "Merch Store 3",
+      "zone": "Main Concourse",
+      "waitMinutes": 14,
+      "utilizationPct": 72,
+      "trend": "rising",
+      "peakTime": "Halftime",
+      "throughput": "10% OFF active",
+      "icon": "local_mall"
+    },
+    {
+      "id": "merch-north",
+      "category": "merchandise",
+      "name": "North Kiosk",
+      "zone": "Plaza level",
+      "waitMinutes": 5,
+      "utilizationPct": 28,
+      "trend": "stable",
+      "peakTime": "Post-game",
+      "throughput": "Caps & jerseys",
+      "icon": "shopping_bag"
+    },
+    {
+      "id": "park-c",
+      "category": "parking",
+      "name": "Parking Lot C",
+      "zone": "South Exit · Car Park",
+      "waitMinutes": 22,
+      "utilizationPct": 89,
+      "trend": "rising",
+      "peakTime": "Post-match",
+      "throughput": "Reserve: Lot A",
+      "icon": "directions_car"
+    },
+    {
+      "id": "park-b",
+      "category": "parking",
+      "name": "South Parking B",
+      "zone": "Outer Ring · Parking",
+      "waitMinutes": 8,
+      "utilizationPct": 52,
+      "trend": "stable",
+      "peakTime": "Exit",
+      "throughput": "Spiral B",
+      "icon": "local_parking"
+    }
+  ]
+}

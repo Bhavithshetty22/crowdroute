@@ -1,0 +1,224 @@
+{
+  "hazardGate": {
+    "label": "Alert · Gate 4",
+    "gate": "Gate 4",
+    "congestionPct": 92,
+    "headline": "AVOID NOW"
+  },
+  "emergencyReroute": {
+    "active": false,
+    "message": "Emergency corridor active — use Gate 7 and East concourse only."
+  },
+  "congestionBroadcast": {
+    "active": false,
+    "message": "South concourse congestion rising — consider North entrance."
+  },
+  "feed": [
+    {
+      "id": "alert-001",
+      "severity": "critical",
+      "title": "Overcrowding Alert — Section B4",
+      "body": "Crowd density at 96%. Immediate rerouting recommended. Do not enter from Gate 4 South entrance at this time.",
+      "icon": "warning",
+      "cta": "View Route",
+      "href": "routes.html",
+      "createdAt": "2026-04-11T14:02:11.000Z"
+    },
+    {
+      "id": "alert-002",
+      "severity": "critical",
+      "title": "Gate 12 — Emergency Closure",
+      "body": "Gate 12 has been closed by stadium security. Use Gates 9, 10, or 15 as alternatives. Staff is directing fans on the concourse.",
+      "icon": "emergency",
+      "cta": "Emergency",
+      "href": "emergency.html",
+      "createdAt": "2026-04-11T13:58:30.000Z"
+    },
+    {
+      "id": "alert-003",
+      "severity": "warning",
+      "title": "Parking Lot C — High Delay",
+      "body": "Exit delays at Lot C estimated at 22 minutes post-match. Consider Lot A via West Exit for 8 min shorter wait.",
+      "icon": "directions_car",
+      "cta": "Alt Route",
+      "href": "routes.html",
+      "createdAt": "2026-04-11T13:52:00.000Z"
+    },
+    {
+      "id": "alert-004",
+      "severity": "warning",
+      "title": "Weather Alert — Light Rain Expected",
+      "body": "Light rain forecast between 21:00–22:00. Covered exits via Gates 8 and 9 are recommended. Ponchos available at Merchandise Stand 3.",
+      "icon": "thunderstorm",
+      "createdAt": "2026-04-11T13:40:15.000Z"
+    },
+    {
+      "id": "alert-005",
+      "severity": "warning",
+      "title": "Section 102 Restrooms — Queue Building",
+      "body": "Queue at 102 restrooms is growing. Level 1 South is currently free with no wait expected.",
+      "icon": "hourglass_top",
+      "cta": "View Map",
+      "href": "map.html",
+      "createdAt": "2026-04-11T13:32:05.000Z"
+    },
+    {
+      "id": "alert-006",
+      "severity": "info",
+      "title": "Halftime in 12 Minutes",
+      "body": "Head to the North Wing food stands now to avoid the halftime rush. Current wait: 2 minutes only.",
+      "icon": "info",
+      "cta": "Queue Data",
+      "href": "queue.html",
+      "createdAt": "2026-04-11T13:20:00.000Z"
+    },
+    {
+      "id": "alert-007",
+      "severity": "info",
+      "title": "Fan Zone — Meet & Greet at 20:30",
+      "body": "Meet the players at the South Fan Zone after the game. Limited capacity — first come first served.",
+      "icon": "local_offer",
+      "createdAt": "2026-04-11T13:05:30.000Z"
+    },
+    {
+      "id": "alert-008",
+      "severity": "success",
+      "title": "Gate 8 Reopened — Flow Restored",
+      "body": "Gate 8 is now operational again. Flow has returned to normal. All routes via East Wing are clear.",
+      "icon": "check_circle",
+      "createdAt": "2026-04-11T12:55:00.000Z"
+    }
+  ],
+  "emergency": {
+    "scenarios": {
+      "fire": {
+        "severityBadge": "CRITICAL",
+        "badgeTone": "critical",
+        "headerTitle": "FIRE EVACUATION — LEAVE NOW",
+        "headerSub": "Follow illuminated exit signs. Do not use lifts unless directed by staff.",
+        "primaryRouteTitle": "Primary route: West stairwell → Gate A",
+        "primaryRouteSub": "Estimated 4 minutes · Avoid central atrium",
+        "paths": {
+          "primary": "M 450 200 Q 350 160 250 120 Q 200 100 150 80",
+          "secondary": "M 450 200 Q 550 160 650 130 Q 700 115 750 95",
+          "blocked": "M 450 200 Q 450 280 450 350"
+        },
+        "exits": [
+          { "id": "gate-a", "name": "Gate A", "detail": "West stairwell · Level 1", "walkMin": 4, "crowd": "Low", "accessible": "Yes", "blocked": false },
+          { "id": "gate-b", "name": "Gate B", "detail": "East corridor · Level 2", "walkMin": 6, "crowd": "Low", "accessible": "Yes", "blocked": false },
+          { "id": "gate-12", "name": "Gate 12", "detail": "South main · security hold", "walkMin": 0, "crowd": "—", "accessible": "No", "blocked": true }
+        ],
+        "instructions": [
+          { "n": 1, "title": "Stay calm", "body": "Panic causes congestion. Follow staff and green exit signs.", "accent": "error" },
+          { "n": 2, "title": "Leave belongings", "body": "Do not stop for bags. Your safety comes first.", "accent": "error" },
+          { "n": 3, "title": "Assist others", "body": "If safe, help children and mobility-impaired fans to the nearest clear exit.", "accent": "tertiary" }
+        ],
+        "contacts": [
+          { "name": "Stadium Security", "subtitle": "On-site response team", "phone": "911-EXT-04", "tel": "tel:911" },
+          { "name": "Medical Outpost", "subtitle": "First aid · Level 1 North", "phone": "911-EXT-08", "tel": "tel:911" },
+          { "name": "Fire Department", "subtitle": "Emergency services", "phone": "911", "tel": "tel:911" }
+        ],
+        "liveSeeds": [
+          { "tone": "error", "title": "Central atrium — smoke reported", "body": "Divert west only. Do not cross mid-field tunnels." },
+          { "tone": "tertiary", "title": "Sprinklers active Zone 4", "body": "Flooring may be slick — short steps, hand on rail." }
+        ]
+      },
+      "medical": {
+        "severityBadge": "HIGH",
+        "badgeTone": "high",
+        "headerTitle": "MEDICAL EMERGENCY — CLEAR LANES",
+        "headerSub": "Medical teams responding. Keep aisles and elevator banks clear.",
+        "primaryRouteTitle": "Evacuation hold: follow staff — Gate D medical cordon",
+        "primaryRouteSub": "Non-ambulatory fans: wait for blue-jacket medics",
+        "paths": {
+          "primary": "M 450 200 L 420 220 L 400 250 L 380 290",
+          "secondary": "M 450 200 Q 520 210 580 230 Q 620 260 600 300",
+          "blocked": "M 450 200 L 450 240 L 450 280"
+        },
+        "exits": [
+          { "id": "gate-d", "name": "Gate D", "detail": "Medical cordon · South plaza", "walkMin": 7, "crowd": "Medium", "accessible": "Yes", "blocked": false },
+          { "id": "gate-a", "name": "Gate A", "detail": "Alternate if D congested", "walkMin": 5, "crowd": "Low", "accessible": "Yes", "blocked": false },
+          { "id": "gate-12", "name": "Gate 12", "detail": "Closed for equipment staging", "walkMin": 0, "crowd": "—", "accessible": "No", "blocked": true }
+        ],
+        "instructions": [
+          { "n": 1, "title": "Clear the aisle", "body": "Step into your row so responders can pass.", "accent": "error" },
+          { "n": 2, "title": "Do not film", "body": "Give medics space and privacy.", "accent": "error" },
+          { "n": 3, "title": "SOS in app", "body": "Use CrowdPilot SOS to share your exact seat with staff.", "accent": "tertiary" }
+        ],
+        "contacts": [
+          { "name": "Medical Control", "subtitle": "Arena EMS", "phone": "911-EXT-08", "tel": "tel:911" },
+          { "name": "Security Desk", "subtitle": "Escort & access", "phone": "911-EXT-04", "tel": "tel:911" },
+          { "name": "Emergency", "subtitle": "Life-threatening only", "phone": "911", "tel": "tel:911" }
+        ],
+        "liveSeeds": [
+          { "tone": "error", "title": "Elevator B reserved for stretcher", "body": "Use stairs or alternate lift bank west." },
+          { "tone": "white", "title": "Hydration stations open", "body": "North concourse taps active for standby fans." }
+        ]
+      },
+      "crowd_surge": {
+        "severityBadge": "HIGH",
+        "badgeTone": "high",
+        "headerTitle": "CROWD SURGE — CONTROLLED EXIT",
+        "headerSub": "Density limits active. Staff are metering gates — do not push.",
+        "primaryRouteTitle": "Rerouted: East service bypass → Gate B",
+        "primaryRouteSub": "Longer walk · much lower density",
+        "paths": {
+          "primary": "M 450 200 Q 520 190 580 185 Q 640 200 700 220",
+          "secondary": "M 450 200 Q 350 210 280 230 Q 220 250 170 270",
+          "blocked": "M 450 200 Q 400 250 380 300 Q 370 340 360 380"
+        },
+        "exits": [
+          { "id": "gate-b", "name": "Gate B", "detail": "Metered · east bypass", "walkMin": 8, "crowd": "Controlled", "accessible": "Yes", "blocked": false },
+          { "id": "gate-a", "name": "Gate A", "detail": "West · intermittent holds", "walkMin": 6, "crowd": "High", "accessible": "Yes", "blocked": false },
+          { "id": "gate-9", "name": "Gate 9", "detail": "Temporarily one-way OUT only", "walkMin": 9, "crowd": "Surge", "accessible": "Limited", "blocked": false }
+        ],
+        "instructions": [
+          { "n": 1, "title": "No stopping", "body": "Keep moving in the queue — pauses cause crush risk.", "accent": "error" },
+          { "n": 2, "title": "Follow reroutes", "body": "Digital signs may differ from your ticket gate — obey staff.", "accent": "error" },
+          { "n": 3, "title": "Check app map", "body": "CrowdPilot updates every few seconds during surge events.", "accent": "tertiary" }
+        ],
+        "contacts": [
+          { "name": "Crowd Control", "subtitle": "Surge desk", "phone": "911-EXT-22", "tel": "tel:911" },
+          { "name": "Security", "subtitle": "Gate overrides", "phone": "911-EXT-04", "tel": "tel:911" },
+          { "name": "Medical", "subtitle": "Injury in crush", "phone": "911", "tel": "tel:911" }
+        ],
+        "liveSeeds": [
+          { "tone": "error", "title": "Section 118 — density critical", "body": "Do not enter 118 from north tunnel. Use east stairs only." },
+          { "tone": "tertiary", "title": "Gate B queue moving", "body": "Wait time down to ~6 minutes after metering wave." }
+        ]
+      },
+      "weather": {
+        "severityBadge": "ADVISORY",
+        "badgeTone": "warning",
+        "headerTitle": "WEATHER HOLD — COVERED EXITS",
+        "headerSub": "Lightning in area. Covered routes recommended; outdoor plazas may be closed.",
+        "primaryRouteTitle": "Covered: Gates 8–9 via north bridge",
+        "primaryRouteSub": "Extra staff on slick surfaces — take short steps",
+        "paths": {
+          "primary": "M 450 200 L 430 195 L 400 188 L 360 175",
+          "secondary": "M 450 200 Q 480 205 510 215 Q 540 230 560 250",
+          "blocked": "M 450 200 L 470 320 L 500 360"
+        },
+        "exits": [
+          { "id": "gate-8", "name": "Gate 8", "detail": "Covered bridge · north", "walkMin": 5, "crowd": "Low", "accessible": "Yes", "blocked": false },
+          { "id": "gate-9", "name": "Gate 9", "detail": "Covered · rideshare adj.", "walkMin": 6, "crowd": "Medium", "accessible": "Yes", "blocked": false },
+          { "id": "plaza-s", "name": "South Plaza", "detail": "Outdoor — closed until all-clear", "walkMin": 0, "crowd": "—", "accessible": "No", "blocked": true }
+        ],
+        "instructions": [
+          { "n": 1, "title": "Avoid outdoor plazas", "body": "Use covered bridges and concourse rings only.", "accent": "error" },
+          { "n": 2, "title": "Watch footing", "body": "Rain + paint can be slick on stairs — use handrails.", "accent": "error" },
+          { "n": 3, "title": "Ponchos", "body": "Merch Stand 3 if you must cross exposed links.", "accent": "tertiary" }
+        ],
+        "contacts": [
+          { "name": "Weather Desk", "subtitle": "Stadium ops", "phone": "911-EXT-77", "tel": "tel:911" },
+          { "name": "Security", "subtitle": "Plaza closures", "phone": "911-EXT-04", "tel": "tel:911" },
+          { "name": "Emergency", "subtitle": "Injury on stairs", "phone": "911", "tel": "tel:911" }
+        ],
+        "liveSeeds": [
+          { "tone": "warning", "title": "Lightning delay: 20 min window", "body": "Concourse remains open; bowl exits to plaza paused." },
+          { "tone": "tertiary", "title": "North bridge traction mats laid", "body": "Extra lighting active — follow amber floor strips." }
+        ]
+      }
+    }
+  }
+}

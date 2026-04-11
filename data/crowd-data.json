@@ -1,0 +1,14 @@
+{
+  "zones": [
+    { "id": "north", "label": "North Concourse", "densityPct": 18, "status": "Clear" },
+    { "id": "east", "label": "East Wing", "densityPct": 52, "status": "Moderate" },
+    { "id": "south", "label": "South Concourse", "densityPct": 82, "status": "Congested" },
+    { "id": "parkingA", "label": "Parking Lot A", "densityPct": 67, "status": "Busy" }
+  ],
+  "regionalBadges": [
+    { "text": "Low — North", "level": "low" },
+    { "text": "High — South", "level": "high" },
+    { "text": "Med — East", "level": "medium" }
+  ],
+  "aiPrediction": "South Concourse is 82% full. North Entrance recommended for the fastest snack run right now."
+}
