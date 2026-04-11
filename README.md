@@ -152,7 +152,7 @@ The application is built completely on modular, vanilla web technologies ensurin
 
 Every page independently loads `shared.css` and its specific `.js` module. These modules fetch simulated telemetry from the `/data` folder, executing application logic and safely persisting user interaction state into `localStorage`. 
 
-![Architecture Diagram](https://via.placeholder.com/800x400.png?text=CrowdPilot+Architecture+Diagram)
+![Architecture Diagram](assets/architecture.png)
 
 ---
 
@@ -181,28 +181,25 @@ Every page independently loads `shared.css` and its specific `.js` module. These
 ## 📸 Screenshots Section
 
 ### Landing Page
-*(Placeholder for Landing Page screenshot)*
+![Landing Page](assets/landing.png)
 
 ### Dashboard
-*(Placeholder for Dashboard screenshot)*
+![Dashboard](assets/dashboard.png)
 
 ### Map
-*(Placeholder for Map screenshot)*
+![Map](assets/map.png)
 
 ### Assistant
-*(Placeholder for Assistant screenshot)*
+![Assistant](assets/assistant.png)
 
 ### Emergency Mode
-*(Placeholder for Emergency Mode screenshot)*
+![Emergency Mode](assets/emergancy.png)
 
 ---
 
-## 👥 Team / Credits Section
+## 👤 Developer
 
-* **[Team Member 1]** - Role / Contribution
-* **[Team Member 2]** - Role / Contribution
-* **[Team Member 3]** - Role / Contribution
-* **[Team Member 4]** - Role / Contribution
+Designed, built, and tested entirely by a **solo developer** as a complete end-to-end hackathon project.
 
 ---
 
