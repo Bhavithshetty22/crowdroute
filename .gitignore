@@ -1,0 +1,22 @@
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Editor and System files
+.DS_Store
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+coverage/

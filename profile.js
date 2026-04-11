@@ -7,7 +7,9 @@ import {
   LS_GEMINI_API_KEY,
 } from './shared.js';
 import { getSavedRoutes, removeSavedRouteById } from './routes.js';
-import { getGeminiApiKey } from './assistant.js';
+import { hasGeminiBackend } from './services/gemini.js';
+import { hasFirebaseBackend } from './services/firebase.js';
+import { hasGoogleMapsBackend } from './services/googleMaps.js';
 
 /** Same keys as onboarding.js */
 const ONBOARD = {
@@ -491,9 +493,44 @@ export function initProfile(opts = {}) {
     updateCompletionBar(completionPercent(state));
     renderSavedRoutesList();
     applyAvatarFromStorage();
-    const gem = document.querySelector('#profile-gemini-key');
-    if (gem instanceof HTMLInputElement) gem.value = getGeminiApiKey();
-  }
+    const statusEl = document.querySelector('#profile-gemini-status');
+    if (statusEl) {
+      hasGeminiBackend().then(isConnected => {
+        if (isConnected) {
+          statusEl.textContent = 'Gemini Connected';
+          statusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-tertiary/20 text-tertiary';
+        } else {
+          statusEl.textContent = 'Gemini Not Available';
+          statusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400';
+        }
+      });
+    }
+
+    const fbStatusEl = document.querySelector('#profile-firebase-status');
+    if (fbStatusEl) {
+      hasFirebaseBackend().then(isConnected => {
+        if (isConnected) {
+          fbStatusEl.textContent = 'Firebase Connected';
+          fbStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-tertiary/20 text-tertiary';
+        } else {
+          fbStatusEl.textContent = 'Not Configured';
+          fbStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400';
+        }
+      });
+    }
+
+    const mapStatusEl = document.querySelector('#profile-maps-status');
+    if (mapStatusEl) {
+      hasGoogleMapsBackend().then(isConnected => {
+        if (isConnected) {
+          mapStatusEl.textContent = 'Maps Connected';
+          mapStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-tertiary/20 text-tertiary';
+        } else {
+          mapStatusEl.textContent = 'Not Configured';
+          mapStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400';
+        }
+      });
+    }
 
   function onLocalChange() {
     const merged = { ...state, ...readFormState() };
@@ -516,16 +553,7 @@ export function initProfile(opts = {}) {
     const next = readFormState();
     state = next;
     persistOnboardingSlice(state);
-    const gemInput = document.querySelector('#profile-gemini-key');
-    if (gemInput instanceof HTMLInputElement) {
-      try {
-        const v = gemInput.value.trim();
-        if (v) localStorage.setItem(LS_GEMINI_API_KEY, v);
-        else localStorage.removeItem(LS_GEMINI_API_KEY);
-      } catch {
-        showToast('Could not store API key.', { type: 'error' });
-      }
-    }
+    paint();
     updateCompletionBar(completionPercent(state));
     showToast('Settings saved successfully.', { duration: 3200, type: 'info' });
   });

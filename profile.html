@@ -109,13 +109,27 @@
         </div>
 
         <div class="settings-section" aria-labelledby="profile-gemini-heading">
-          <h3 id="profile-gemini-heading" class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500 mb-2">Gemini API (optional)</h3>
-          <p class="text-stone-400 text-xs mb-3 leading-relaxed">Paste a <a href="https://aistudio.google.com/apikey" class="text-primary-container font-bold hover:underline" target="_blank" rel="noopener noreferrer">Google AI Studio</a> key to power the Assistant with live Gemini responses. Stored only in this browser.</p>
-          <form onsubmit="event.preventDefault()">
-            <label class="text-[10px] text-stone-500 uppercase font-bold block mb-1" for="profile-gemini-key">API key</label>
-            <input id="profile-gemini-key" type="password" autocomplete="off" placeholder="AIza…" class="w-full bg-white/05 border border-white/10 rounded-xl px-3 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary-container placeholder:text-stone-600 font-mono"/>
-          </form>
-          <p class="text-[10px] text-stone-600 mt-2">Clear the field and save to use the built-in local assistant only.</p>
+          <div class="flex justify-between items-center mb-2">
+            <h3 id="profile-gemini-heading" class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500">Gemini Native AI</h3>
+            <span id="profile-gemini-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400">Checking...</span>
+          </div>
+          <p class="text-stone-400 text-xs mb-3 leading-relaxed">The application now uses a secure backend endpoint to process generative AI prompts natively without exposing API credentials to the browser client.</p>
+        </div>
+
+        <div class="settings-section" aria-labelledby="profile-firebase-heading">
+          <div class="flex justify-between items-center mb-2">
+            <h3 id="profile-firebase-heading" class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500">Firebase Auth & Sync</h3>
+            <span id="profile-firebase-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400">Checking...</span>
+          </div>
+          <p class="text-stone-400 text-xs mb-3 leading-relaxed">Architected for Google Firebase to handle cross-device synchronization, true user identity profiling, and real-time push alerts via Cloud Messaging.</p>
+        </div>
+
+        <div class="settings-section" aria-labelledby="profile-maps-heading">
+          <div class="flex justify-between items-center mb-2">
+            <h3 id="profile-maps-heading" class="font-bold headline-font text-sm uppercase tracking-widest text-stone-500">Google Maps Navigation</h3>
+            <span id="profile-maps-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400">Checking...</span>
+          </div>
+          <p class="text-stone-400 text-xs mb-3 leading-relaxed">Engineered to overlay coordinate-accurate stadium grids, real-time Directions API footpaths, and vehicular congestion metrics via Google Cloud.</p>
         </div>
 
         <!-- Seat Info -->

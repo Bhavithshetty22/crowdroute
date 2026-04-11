@@ -1,60 +1,10 @@
 import { saveToStorage, loadFromStorage, randomInt, showToast, LS_GEMINI_API_KEY } from './shared.js';
+import { hasGeminiBackend, askGemini } from './services/gemini.js';
 
 const STORAGE_KEY = 'crowdpilotAssistantChat';
 /** @deprecated use LS_GEMINI_API_KEY from shared.js */
 export const GEMINI_KEY_STORAGE = LS_GEMINI_API_KEY;
 const VOICE_AUTOSEND_KEY = 'crowdpilot_voice_autosend';
-const GEMINI_MODEL = 'gemini-2.0-flash';
-
-const STADIUM_SYSTEM = `You are CrowdPilot AI, a stadium companion for fans at a live event (e.g. Section B12, north concourse).
-Answer clearly in short paragraphs (2–4 sentences total unless the user asks for detail).
-Cover: washrooms, food queues, exits, gates, parking, halftime timing, accessibility, and emergencies.
-If something is unknown, say so and suggest checking venue staff or official alerts.
-Do not claim real-time sensor data; phrase live info as typical or demo-style guidance when appropriate.`;
-
-export function getGeminiApiKey() {
-  try {
-    return String(localStorage.getItem(LS_GEMINI_API_KEY) || '').trim();
-  } catch {
-    return '';
-  }
-}
-
-/**
- * Calls Google Gemini when an API key is configured. Returns `null` if no key, bad response, or error.
- * Resolved shape: `{ text: string, cards?: Card[] }` or a string for normalizeGeminiReply.
- */
-export async function askGemini(userMessage) {
-  const key = getGeminiApiKey();
-  if (!key || !userMessage?.trim()) return null;
-
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`;
-  const body = {
-    systemInstruction: { parts: [{ text: STADIUM_SYSTEM }] },
-    contents: [{ role: 'user', parts: [{ text: userMessage.trim() }] }],
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 1024,
-    },
-  };
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const errText = await res.text().catch(() => '');
-    throw new Error(errText || `Gemini HTTP ${res.status}`);
-  }
-
-  const data = await res.json();
-  const text =
-    data?.candidates?.[0]?.content?.parts?.map((p) => p.text).filter(Boolean).join('\n') || '';
-  if (!text.trim()) return null;
-  return { text: text.trim() };
-}
 
 /** @typedef {{ type: 'route'|'queue'|'alert'|'parking', title: string, body: string, badge?: string, meta?: string, cta?: string, href?: string, icon?: string }} Card */
 
@@ -592,7 +542,7 @@ export function buildLocalReply(userMessage) {
  * @param {string} userMessage
  */
 export async function resolveAssistantReply(userMessage) {
-  if (getGeminiApiKey()) {
+  if (await hasGeminiBackend()) {
     try {
       const raw = await askGemini(userMessage);
       const normalized = normalizeGeminiReply(raw);
@@ -892,6 +842,20 @@ function typeParagraphs(bodyEl, paragraphs, msPerChar, onDone) {
  */
 export function initAssistant(options = {}) {
   injectAssistantStyles();
+
+  hasGeminiBackend().then(isConnected => {
+    if (isConnected) {
+      const existingBadge = document.querySelector('#gemini-enabled-badge');
+      const headerRow = document.querySelector('h1');
+      if (!existingBadge && headerRow) {
+        const badge = document.createElement('span');
+        badge.id = 'gemini-enabled-badge';
+        badge.innerHTML = '<span class="material-symbols-outlined text-[10px] align-middle mr-1" style="font-variation-settings:\'FILL\' 1;">bolt</span>Gemini Enabled';
+        badge.className = 'ml-3 text-[10px] bg-tertiary/20 text-tertiary px-2 py-0.5 rounded-full border border-tertiary/30 align-middle inline-flex items-center tracking-widest uppercase font-bold relative -top-1';
+        headerRow.appendChild(badge);
+      }
+    }
+  });
 
   const sel = {
     messages: options.messagesSelector || '#chat-messages',

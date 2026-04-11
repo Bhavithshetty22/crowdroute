@@ -88,11 +88,10 @@ crowdpilot-ai/
 ├── shared.css           # Core Design System
 ├── shared.js            # Shared JS Utilities
 ├── polish.js            # UI/UX Enhancements
-├── data/                # Simulated JSON Endpoints
-│   ├── queue-data.json
-│   ├── crowd-data.json
-│   ├── alerts-data.json
-│   └── routes-data.json
+├── data/                # Simulated live feeds (crowd, alerts, queues)
+├── docs/                # Technical documentation and QA protocols
+├── services/            # API wrappers for Google integrations
+├── tests/               # Lightweight core logic verification scripts
 └── README.md            # Project Documentation
 ```
 
@@ -194,6 +193,26 @@ Every page independently loads `shared.css` and its specific `.js` module. These
 
 ### Emergency Mode
 ![Emergency Mode](assets/emergancy.png)
+
+---
+
+## 🧪 Testing
+
+To ensure platform stability without bloating the project footprint, CrowdPilot AI implements a dual-layer testing approach:
+
+* **Programmatic JavaScript Testing (`/tests`):** Utilizes a bespoke, extremely lightweight testing layer written in pure JavaScript relying on native `console.assert()`. Ensures zero external dependencies while accurately validating persistent `localStorage` flows, dynamic dashboard mathematical thresholds, algorithmic UI updates, and profile deep merging capabilities. 
+* **Manual QA Playbooks:** Defined meticulously within `docs/testing.md`, establishing strict layout verification routines encompassing desktop responsiveness, mobile gesture tests, deep accessibility ARIA label auditing, simulated network failure contingencies, and critical path checks for emergency flow overrides.
+
+---
+
+## 🌩️ Google Services Integration
+
+CrowdPilot AI actively employs powerful native tools and is architecturally predisposed to seamlessly adopt deep Google Cloud connections (documented deeply in `docs/google-services.md`):
+
+* **AI Architecture:** Uses `services/gemini.js` to establish a robust connector perfectly structured to transmit JSON stadium variables directly to Google's Gemini 1.5 framework. To maximize security, the platform utilizes secure backend proxy methods (`/api/gemini`), ensuring API credentials (`process.env.GEMINI_API_KEY`) remain locked serverside and are completely sequestered from the front-facing client.
+* **Firebase Auth & Cloud Sync:** `services/firebase.js` prepares direct bindings to Firebase Firestore data schemas allowing true cloud sync. This replaces localized `localStorage` to ensure cross-device consistency. Furthermore, future Firebase Auth implementations (`initializeAuth`, `signInWithGoogle`) will allow attendees to seamlessly link profiles securely without password burden at the venue gates.
+* **Real-World Topographical Navigation:** `services/googleMaps.js` holds scaffolding to swap logical SVG mockups for the interactive Google Maps Javascript API. Deploying the robust Maps Directions API converts explicit theoretical queues into live foot-paths, calculating true physical transit distances natively incorporating restricted zones, staff-only areas, and real vehicular egress boundaries using secure keys (`process.env.GOOGLE_MAPS_API_KEY`).
+* **Browser Synergy:** Leverages highly native browser APIs including explicit Web Speech Recognition deployment for interactive AI access, OS Push Notifications for live event alerts, and structural Web Storage APIs for resilient graceful fallbacks.
 
 ---
 
