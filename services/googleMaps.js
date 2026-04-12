@@ -18,7 +18,7 @@
 let MAPS_CONFIG = {
     apiKey: import.meta.env?.VITE_GOOGLE_MAPS_KEY
         ?? (typeof process !== 'undefined' ? process.env?.GOOGLE_MAPS_API_KEY : undefined)
-        ?? 'AIzaSyARfpvIP71u0H6dplaK0CXR9b33CnVbiio', // fallback for local dev
+    
 };
 
 let _configLoaded = false;
