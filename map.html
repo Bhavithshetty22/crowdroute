@@ -89,7 +89,7 @@
             <p class="js-map-crowd-density font-bold text-secondary-container">—</p>
           </div>
         </div>
-        <button type="button" class="w-full bg-primary-container text-white py-3 rounded-xl font-bold text-xs hover:brightness-110 glide">Start navigation</button>
+        <button type="button" class="js-start-navigation w-full bg-primary-container text-white py-3 rounded-xl font-bold text-xs hover:brightness-110 glide">Start navigation</button>
       </div>
     </div>
   </aside>
@@ -119,23 +119,33 @@
       </div>
     </div>
 
-    <!-- MAP CANVAS (pan/zoom via map.js) -->
+    <!-- MAP CANVAS -->
     <div class="flex-1 relative overflow-hidden">
-      <div id="map-viewport" class="absolute inset-0 overflow-hidden z-0 cursor-grab active:cursor-grabbing touch-none">
+
+      <!--
+        FIX: Removed the "hidden" Tailwind class from this element.
+        "hidden" sets display:none !important which cannot be overridden by JS style.display.
+        Visibility is now controlled exclusively via JS (style.display = 'none' / 'block').
+        The container starts hidden via inline style so the SVG fallback shows by default.
+      -->
+      <div id="google-map-container" class="absolute inset-0 z-10 bg-[#0e0e0e]" style="display:none;" aria-label="Google Maps interactive layer"></div>
+
+      <!-- LOCAL SVG FALLBACK LAYER -->
+      <div id="svg-map-fallback" class="absolute inset-0 overflow-hidden z-0 cursor-grab active:cursor-grabbing touch-none">
         <div id="map-transform-layer" class="absolute left-0 top-0 w-full h-full origin-center" style="transform: translate(0px, 0px) scale(1); will-change: transform">
           <!-- Base map image -->
           <img src="https://images.unsplash.com/photo-1524117074681-31bd4de22ad3?w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale brightness-75 pointer-events-none select-none" draggable="false" alt="Stadium aerial view"/>
           <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30 pointer-events-none"></div>
 
-          <!-- Heat zones (from crowd-data.json, positioned in map.js) -->
+          <!-- Heat zones -->
           <div id="map-heat-zones" class="absolute inset-0 pointer-events-none z-[1]"></div>
 
-          <!-- SVG route line (path from routes-data mapOverlay.paths) -->
+          <!-- SVG route line -->
           <svg id="map-route-svg" class="route-svg z-[2]" viewBox="0 0 1000 600" preserveAspectRatio="none">
             <path id="map-route-path" data-map-route="1" class="route-path" d="" stroke="#ff6b00" stroke-width="3" fill="none" stroke-linecap="round"/>
           </svg>
 
-          <!-- Pins from routes-data mapOverlay.pins -->
+          <!-- Pins -->
           <div id="map-pins-layer" class="absolute inset-0 z-[3]"></div>
         </div>
       </div>
@@ -148,37 +158,37 @@
         <button type="button" id="map-rotate-demo" class="w-10 h-10 glass-panel rounded-xl flex items-center justify-center text-stone-300 hover:text-primary-container glide" aria-label="Nudge rotation (demo)"><span class="material-symbols-outlined text-base" aria-hidden="true">rotate_90_degrees_ccw</span></button>
       </div>
 
-      <!-- BOTTOM OVERLAY: POI shortlist (lift on mobile so route panel can sit below) -->
-      <div class="absolute bottom-4 left-4 right-4 max-lg:bottom-[10.5rem] flex gap-3 overflow-x-auto z-20">
-        <button class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-tertiary/40 glide" style="border:1px solid rgba(83,225,111,0.2)">
+      <!-- BOTTOM OVERLAY: POI shortlist -->
+      <div id="quick-poi-panel" class="absolute bottom-4 left-4 right-4 max-lg:bottom-[10.5rem] flex gap-3 overflow-x-auto z-20">
+        <button data-dest-id="food" class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-tertiary/40 glide" style="border:1px solid rgba(83,225,111,0.2)">
           <span class="material-symbols-outlined text-tertiary text-lg" style="font-variation-settings:'FILL' 1;">restaurant</span>
           <div class="text-left">
             <p class="text-xs font-bold text-white">Food Stalls</p>
             <p class="text-[10px] text-tertiary">3 nearby, best 2 min</p>
           </div>
         </button>
-        <button class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-secondary-container/40 glide" style="border:1px solid rgba(254,183,0,0.2)">
+        <button data-dest-id="washroom" class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-secondary-container/40 glide" style="border:1px solid rgba(254,183,0,0.2)">
           <span class="material-symbols-outlined text-secondary-container text-lg" style="font-variation-settings:'FILL' 1;">wc</span>
           <div class="text-left">
             <p class="text-xs font-bold text-white">Washrooms</p>
             <p class="text-[10px] text-secondary-container">Level 2 free</p>
           </div>
         </button>
-        <button class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-primary-container/40 glide" style="border:1px solid rgba(255,107,0,0.2)">
+        <button data-dest-id="gate" class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-primary-container/40 glide" style="border:1px solid rgba(255,107,0,0.2)">
           <span class="material-symbols-outlined text-primary-container text-lg" style="font-variation-settings:'FILL' 1;">logout</span>
           <div class="text-left">
             <p class="text-xs font-bold text-white">Exit Gates</p>
             <p class="text-[10px] text-primary-container">Gate 9 fastest</p>
           </div>
         </button>
-        <button class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-amber-400/40 glide" style="border:1px solid rgba(245,158,11,0.2)">
+        <button data-dest-id="parking" class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-amber-400/40 glide" style="border:1px solid rgba(245,158,11,0.2)">
           <span class="material-symbols-outlined text-amber-400 text-lg" style="font-variation-settings:'FILL' 1;">local_parking</span>
           <div class="text-left">
             <p class="text-xs font-bold text-white">Parking</p>
             <p class="text-[10px] text-amber-400">Lot C moderate</p>
           </div>
         </button>
-        <button class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-red-400/40 glide" style="border:1px solid rgba(220,38,38,0.2)">
+        <button data-dest-id="emergency_exit" class="glass-panel flex items-center gap-3 px-5 py-3.5 rounded-2xl shrink-0 hover:border-red-400/40 glide" style="border:1px solid rgba(220,38,38,0.2)">
           <span class="material-symbols-outlined text-red-400 text-lg animate-pulse" style="font-variation-settings:'FILL' 1;">emergency</span>
           <div class="text-left">
             <p class="text-xs font-bold text-white">Emergency Exits</p>
@@ -187,7 +197,7 @@
         </button>
       </div>
 
-      <!-- Mobile route summary (mirrors sidebar panel; same data-route-summary-panel hook) -->
+      <!-- Mobile route summary -->
       <details id="map-mobile-route-details" class="lg:hidden fixed bottom-0 left-0 right-0 z-[21] glass-card border-t border-white/10 rounded-t-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.4)] max-h-[42vh] flex flex-col [&_summary::-webkit-details-marker]:hidden" open>
         <summary class="px-4 py-3 font-bold text-sm flex items-center justify-between cursor-pointer list-none border-b border-white/05 shrink-0" aria-label="Toggle route summary panel">
           <span class="flex items-center gap-2"><span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">alt_route</span> Selected route</span>
@@ -217,7 +227,7 @@
                 <p class="js-map-crowd-density font-bold text-secondary-container">—</p>
               </div>
             </div>
-            <button type="button" class="w-full bg-primary-container text-white py-3 rounded-xl font-bold text-xs hover:brightness-110 glide">Start navigation</button>
+            <button type="button" class="js-start-navigation w-full bg-primary-container text-white py-3 rounded-xl font-bold text-xs hover:brightness-110 glide">Start navigation</button>
           </div>
         </div>
       </details>

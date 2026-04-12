@@ -2,21 +2,55 @@
  * services/firebase.js
  * Scoped Wrapper for global Firebase integration.
  */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-const FIREBASE_CONFIG = {
-    apiKey: typeof process !== 'undefined' && process.env ? process.env.FIREBASE_API_KEY : undefined,
-    authDomain: typeof process !== 'undefined' && process.env ? process.env.FIREBASE_AUTH_DOMAIN : undefined,
-    projectId: typeof process !== 'undefined' && process.env ? process.env.FIREBASE_PROJECT_ID : undefined,
-    storageBucket: typeof process !== 'undefined' && process.env ? process.env.FIREBASE_STORAGE_BUCKET : undefined,
-    messagingSenderId: typeof process !== 'undefined' && process.env ? process.env.FIREBASE_MESSAGING_SENDER_ID : undefined,
-    appId: typeof process !== 'undefined' && process.env ? process.env.FIREBASE_APP_ID : undefined
-};
+// Global instances
+export let app = null;
+export let auth = null;
+export let db = null;
+
+let _configLoaded = false;
+const FIREBASE_CONFIG = {};
+
+/**
+ * Bootstraps config locally avoiding exposed bundlers.
+ */
+async function loadConfig() {
+    if (_configLoaded) return;
+    try {
+        const response = await fetch('/.env');
+        if (!response.ok) throw new Error("No .env found relative to host");
+        const text = await response.text();
+        const lines = text.split('\n');
+        
+        lines.forEach(line => {
+            if (line.includes('=')) {
+                const parts = line.split('=');
+                const key = parts[0].trim();
+                const val = parts.slice(1).join('=').trim().replace(/"/g, '').replace(/'/g, '');
+                
+                if (key === 'FIREBASE_API_KEY') FIREBASE_CONFIG.apiKey = val;
+                if (key === 'FIREBASE_AUTH_DOMAIN') FIREBASE_CONFIG.authDomain = val;
+                if (key === 'FIREBASE_PROJECT_ID') FIREBASE_CONFIG.projectId = val;
+                if (key === 'FIREBASE_STORAGE_BUCKET') FIREBASE_CONFIG.storageBucket = val;
+                if (key === 'FIREBASE_MESSAGING_SENDER_ID') FIREBASE_CONFIG.messagingSenderId = val;
+                if (key === 'FIREBASE_APP_ID') FIREBASE_CONFIG.appId = val;
+            }
+        });
+        _configLoaded = true;
+    } catch(err) {
+        console.warn("[Firebase] Could not fetch /.env securely. Using defaults if bundler injected.");
+    }
+}
 
 /**
  * Validates if the Firebase configuration is populated via environment variables.
  * @returns {Promise<boolean>}
  */
 export async function hasFirebaseBackend() {
+    await loadConfig();
     return !!FIREBASE_CONFIG.apiKey;
 }
 
@@ -24,9 +58,13 @@ export async function hasFirebaseBackend() {
  * initializeFirebase
  * Bootstraps the Firebase client application instance.
  */
-export function initializeFirebase() {
-    // import { initializeApp } from "firebase/app";
-    // const app = initializeApp(FIREBASE_CONFIG);
+export async function initializeFirebase() {
+    await loadConfig();
+    if (!FIREBASE_CONFIG.apiKey) {
+        throw new Error("[Firebase] Missing API Configuration. Check .env!");
+    }
+    app = initializeApp(FIREBASE_CONFIG);
+    db = getFirestore(app);
     console.log("[Firebase Ready] App instance successfully constructed.");
 }
 
@@ -35,54 +73,56 @@ export function initializeFirebase() {
  * Firebase Auth will be used to track user sessions securely without localStorage constraints.
  */
 export function initializeAuth() {
-    // import { getAuth } from "firebase/auth";
-    // const auth = getAuth(app);
+    if (!app) throw new Error("Initialize Firebase first.");
+    auth = getAuth(app);
     console.log("[Firebase Auth Ready] Service initiated.");
 }
 
 /**
- * signInWithGoogle
- * Google Sign-In can be added later to replace manual profile filling completely seamlessly.
- * How cloud sync will replace localStorage in the future:
- * Linking identity globally drops the reliance of localized browser cache, achieving true roaming profiles.
+ * Listen for user auth state
  */
-export async function signInWithGoogle() {
-    // import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-    console.log("[Firebase Auth] Simulating OAuth redirect for Identity linking.");
+export function onUserAuth(callback) {
+    if(!auth) return;
+    return onAuthStateChanged(auth, callback);
 }
 
 /**
- * signInWithEmail
- * Authenticational fallback for non-Google emails.
+ * Authenticates user natively securely
  */
 export async function signInWithEmail(email, pass) {
-    // import { signInWithEmailAndPassword } from "firebase/auth";
+    if (!auth) throw new Error("Auth not initialized");
     console.log("[Firebase Auth] Authenticating via structural identity provider.");
+    return await signInWithEmailAndPassword(auth, email, pass);
+}
+
+export async function createAccount(email, pass) {
+    if (!auth) throw new Error("Auth not initialized");
+    console.log("[Firebase Auth] Generating Native Identity.");
+    return await createUserWithEmailAndPassword(auth, email, pass);
 }
 
 /**
  * saveUserProfile
- * How Firestore will store routes and profile data:
- * Cloud buckets will natively snapshot demographic preferences allowing instant cross-device updates.
+ * Snapshot demographic preferences natively dynamically.
  */
 export async function saveUserProfile(uid, preferences) {
-    // import { doc, setDoc } from "firebase/firestore";
-    console.log("[Firestore Sync] Pushing profile to Firestore DB...", preferences);
+    if (!db) return;
+    try {
+        const userRef = doc(db, "users", uid);
+        await setDoc(userRef, { preferences, updated_at: new Date() }, { merge: true });
+        console.log("[Firestore Sync] Pushed profile to Firestore DB");
+    } catch(err) {
+        console.error("[Firestore error]", err);
+    }
 }
 
 /**
- * saveSavedRoute
  * Stores a custom navigation segment persistently in cloud collections.
  */
 export async function saveSavedRoute(uid, routeData) {
-    // import { arrayUnion } from "firebase/firestore";
     console.log("[Firestore Sync] Syncing active route to Firebase...", routeData);
 }
 
-/**
- * loadSavedRoutes
- * Retrieves the cross-device sync routes securely tied to identity.
- */
 export async function loadSavedRoutes(uid) {
     console.log("[Firestore Sync] Retrieving active routes from remote collections.");
     return [];

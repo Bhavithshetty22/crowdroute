@@ -4,6 +4,7 @@ import {
   showToast,
   fadePageTransition,
 } from './shared.js';
+import { saveUserProfile } from './services/firebase.js';
 
 const STORAGE_KEYS = {
   seatSection: 'seatSection',
@@ -391,22 +392,29 @@ export function initOnboarding(options = {}) {
       return;
     }
 
-    if (action === 'complete') {
-      ordered.forEach((el) => collectFromDom(el, state));
-      const checks = ordered.filter((el) => stepType(el) !== 'summary');
-      for (const el of checks) {
-        const v = validateStep(el);
-        if (!v.ok) {
-          showToast(v.message, { type: 'error' });
-          return;
+      if (action === 'complete') {
+        ordered.forEach((el) => collectFromDom(el, state));
+        const checks = ordered.filter((el) => stepType(el) !== 'summary');
+        for (const el of checks) {
+          const v = validateStep(el);
+          if (!v.ok) {
+            showToast(v.message, { type: 'error' });
+            return;
+          }
         }
+        persistAll(state);
+        
+        // Broadcast profile payload securely to Firestore to maintain device-roaming natively!
+        const uid = window.localStorage.getItem('crowdpilot_uid');
+        if (uid) {
+           saveUserProfile(uid, state);
+        }
+
+        showToast('Onboarding complete. Welcome to CrowdPilot AI!');
+        window.setTimeout(() => {
+          fadePageTransition(cfg.dashboardHref, { ms: 280 });
+        }, 450);
       }
-      persistAll(state);
-      showToast('Onboarding complete. Welcome to CrowdPilot AI!');
-      window.setTimeout(() => {
-        fadePageTransition(cfg.dashboardHref, { ms: 280 });
-      }, 450);
-    }
   });
 
   return {

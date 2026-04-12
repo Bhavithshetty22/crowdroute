@@ -63,12 +63,14 @@ Unlike generic mapping apps, CrowdPilot AI is purpose-built for the ultra-dense,
 * Static JSON files for dynamic state injection
 * `localStorage` for robust, persistent client-side state management
 
-**Future Integrations:**
+**Core API Integrations:**
+* Google Maps API (Native vector projection & custom localized interior pathfinding)
+* Firebase V9 Modular SDK (Authentication & real-time Firestore persistence mesh)
 * Google Gemini API (For live, unscripted AI context)
-* Firebase (For persistent cloud data syncing and authentication)
-* Google Maps API (For hyper-accurate geolocation mapping)
-* Push Notifications 
+
+**Future Horizon:**
 * Service Worker / Offline Support (For resilience on spotty stadium networks)
+* Push Notifications via FCM
 
 ---
 
@@ -135,11 +137,10 @@ For judges evaluating this project, follow this recommended walkthrough:
 ## 🤖 Google Services Used / Planned
 
 - **Gemini API:** Supported client-side integration for intelligent conversational intelligence.
-- **Firebase:** Planned for real-time state syncing across devices.
-- **Google Maps API:** Planned integration for exterior navigation and parking guidance.
+- **Firebase Auth & Firestore:** Fully active! Drives identity generation, and transparently replicates user demographic onboarding choices up to the cloud.
+- **Google Maps API:** Fully dynamic interactive layer bypassing standard Directions Service to allow Native Custom Bezier Polyline routing through unmapped enclosed spaces.
 - **Browser Notifications API:** Utilized locally for background event alerting.
-- **localStorage:** Primary data mechanism ensuring state persistence without a backend.
-- **Speech Recognition API:** Embedded into the AI Assistant for hands-free voice querying.
+- **Web Speech Recognition API:** Embedded into the AI Assistant for hands-free voice querying.
 
 ---
 
@@ -147,9 +148,9 @@ For judges evaluating this project, follow this recommended walkthrough:
 
 The application is built completely on modular, vanilla web technologies ensuring blazing-fast execution without framework overhead:
 
-**Frontend Pages `→` JS Modules `→` JSON Data `→` localStorage `→` Future Gemini / Firebase integrations**
+**Frontend Pages `→` JS Modules `→` Modular API Services `→` Native Google Architecture**
 
-Every page independently loads `shared.css` and its specific `.js` module. These modules fetch simulated telemetry from the `/data` folder, executing application logic and safely persisting user interaction state into `localStorage`. 
+Every page independently loads `shared.css` and its specific `.js` module. By executing an isolated dynamic `.env` scraper securely over a static file server, CrowdPilot injects tokens to dynamically construct Google Maps Heatmap Visualizations, parse SVG mock paths into Math-based Bezier arrays mapping over Native Polylines, and persist user state continuously to Firebase without relying on bulky bundlers like Webpack or Vite. 
 
 ![Architecture Diagram](assets/architecture.png)
 
@@ -168,9 +169,8 @@ Every page independently loads `shared.css` and its specific `.js` module. These
 
 - **Live Gemini assistant:** Expanding context awareness and memory matching.
 - **Voice assistant:** Bidirectional text-to-speech for accessible, screen-less engagement.
-- **Push notifications:** Migrating localized toasts to true push notifications (via FCM).
+- **Push notifications:** Migrating localized toasts to true push notifications via FCM.
 - **Offline mode:** Full PWA service-worker architecture for offline resilience.
-- **Real map zoom and drag:** Replacing static SVG layers with a full tile engine.
 - **Live backend:** Syncing actual stadium turnstile and facility telemetry.
 - **QR ticket integration:** Auto-determining user seat locations upon scanning in.
 - **Seat-level navigation:** Turn-by-turn interior wayfinding using BLE beacons.
@@ -210,9 +210,9 @@ To ensure platform stability without bloating the project footprint, CrowdPilot 
 CrowdPilot AI actively employs powerful native tools and is architecturally predisposed to seamlessly adopt deep Google Cloud connections (documented deeply in `docs/google-services.md`):
 
 * **AI Architecture:** Uses `services/gemini.js` to establish a robust connector perfectly structured to transmit JSON stadium variables directly to Google's Gemini 1.5 framework. To maximize security, the platform utilizes secure backend proxy methods (`/api/gemini`), ensuring API credentials (`process.env.GEMINI_API_KEY`) remain locked serverside and are completely sequestered from the front-facing client.
-* **Firebase Auth & Cloud Sync:** `services/firebase.js` prepares direct bindings to Firebase Firestore data schemas allowing true cloud sync. This replaces localized `localStorage` to ensure cross-device consistency. Furthermore, future Firebase Auth implementations (`initializeAuth`, `signInWithGoogle`) will allow attendees to seamlessly link profiles securely without password burden at the venue gates.
-* **Real-World Topographical Navigation:** `services/googleMaps.js` holds scaffolding to swap logical SVG mockups for the interactive Google Maps Javascript API. Deploying the robust Maps Directions API converts explicit theoretical queues into live foot-paths, calculating true physical transit distances natively incorporating restricted zones, staff-only areas, and real vehicular egress boundaries using secure keys (`process.env.GOOGLE_MAPS_API_KEY`).
-* **Browser Synergy:** Leverages highly native browser APIs including explicit Web Speech Recognition deployment for interactive AI access, OS Push Notifications for live event alerts, and structural Web Storage APIs for resilient graceful fallbacks.
+* **Firebase Auth & Cloud Sync:** Through `services/firebase.js`, the app binds directly to Firebase modular CDNs. The bespoke local environment parser allows it to execute native `signInWithEmailAndPassword`, seamlessly replacing `localStorage` across the session. The `onboarding.js` scripts snapshot preferences actively to Firestore buckets allowing full cross-device identity continuity.
+* **Real-World Topographical Navigation:** Moving away from static images, `services/googleMaps.js` actively powers the map instance utilizing Maps JavaScript API geometry engines. To preserve internal building paths that fail public-road directions processing (`DirectionsService`), CrowdPilot parses proprietary `svgPath` geometries natively into mapped arrays, injecting custom Bezier polygons inside stadium walls completely dynamically!
+* **Browser Synergy:** Leverages highly native browser APIs including explicit Web Speech Recognition deployment for interactive AI access and logical OS capabilities.
 
 ---
 

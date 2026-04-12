@@ -115,11 +115,11 @@
           <div class="space-y-4">
             <div>
               <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Email Address</label>
-              <input type="email" placeholder="alex@stadium.ai" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
+              <input type="email" id="email-input" placeholder="alex@stadium.ai" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
             </div>
             <div>
               <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Password</label>
-              <input type="password" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
+              <input type="password" id="password-input" placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600"/>
             </div>
             <div class="flex justify-between items-center text-sm">
               <label class="flex items-center gap-2 cursor-pointer">
@@ -150,7 +150,7 @@
           </div>
 
           <!-- Step: Seat -->
-          <div class="onboard-step active" id="step-seat">
+          <div class="onboard-step active" data-onboard-step="seat" id="step-seat">
             <h1 class="text-3xl font-black headline-font mb-2">Your seat section</h1>
             <p class="text-stone-400 mb-8 text-sm">Personalize crowd predictions, exits, and nearby facilities.</p>
             <div class="grid grid-cols-3 gap-3 mb-6">
@@ -185,7 +185,7 @@
           </div>
 
           <!-- Step: Categories -->
-          <div class="onboard-step" id="step-categories">
+          <div class="onboard-step" data-onboard-step="categories" id="step-categories">
             <h1 class="text-3xl font-black headline-font mb-2">What do you enjoy?</h1>
             <p class="text-stone-400 mb-8 text-sm">We'll tune recommendations to your favorites.</p>
             <div class="grid grid-cols-2 gap-3 mb-6">
@@ -221,7 +221,7 @@
           </div>
 
           <!-- Step: Route -->
-          <div class="onboard-step" id="step-route">
+          <div class="onboard-step" data-onboard-step="route" id="step-route">
             <h1 class="text-3xl font-black headline-font mb-2">Route preference</h1>
             <p class="text-stone-400 mb-8 text-sm">How should we prioritize walking directions?</p>
             <div class="space-y-3 mb-6">
@@ -251,7 +251,7 @@
           </div>
 
           <!-- Step: Accessibility -->
-          <div class="onboard-step" id="step-accessibility">
+          <div class="onboard-step" data-onboard-step="accessibility" id="step-accessibility">
             <h1 class="text-3xl font-black headline-font mb-2">Accessibility cues</h1>
             <p class="text-stone-400 mb-8 text-sm">Match assistive routing in the app.</p>
             <div class="space-y-3 mb-6">
@@ -279,7 +279,7 @@
           </div>
 
           <!-- Step: Summary -->
-          <div class="onboard-step" id="step-summary">
+          <div class="onboard-step" data-onboard-step="summary" id="step-summary">
             <div class="text-center mb-6">
               <div class="w-20 h-20 bg-tertiary/20 rounded-full flex items-center justify-center mx-auto mb-4" style="box-shadow:0 0 48px rgba(83,225,111,0.25)">
                 <span class="material-symbols-outlined text-tertiary text-4xl" style="font-variation-settings:'FILL' 1;">check_circle</span>
@@ -308,134 +308,6 @@
   </main>
 </div>
 
-<script>
-  // ── State ──────────────────────────────────────────────────────────
-  const state = { seat: null, categories: [], route: null, accessibility: null };
-  const STEPS = ['seat', 'categories', 'route', 'accessibility', 'summary'];
-  let currentStep = 0;
-
-  // ── Toast ──────────────────────────────────────────────────────────
-  function showToast(msg, type = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'show' + (type ? ' ' + type : '');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(() => t.className = '', 3000);
-  }
-
-  // ── Page switching ─────────────────────────────────────────────────
-  function showPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-  }
-
-  document.getElementById('btn-google-signin').onclick = () => showOnboarding();
-  document.getElementById('btn-email-signin').onclick = () => showOnboarding();
-  document.getElementById('btn-create-account').onclick = () => showOnboarding();
-  document.getElementById('btn-back-signin').onclick = () => showPage('page-signin');
-
-  function showOnboarding() {
-    showPage('page-onboarding');
-    goToStep(0);
-  }
-
-  // ── Step navigation ────────────────────────────────────────────────
-  function goToStep(index) {
-    document.querySelectorAll('.onboard-step').forEach(s => s.classList.remove('active'));
-    document.getElementById('step-' + STEPS[index]).classList.add('active');
-    currentStep = index;
-    const pct = Math.round(((index + 1) / STEPS.length) * 100);
-    document.getElementById('progress-fill').style.width = pct + '%';
-    // scroll right panel to top
-    document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // ── Pref card selection ────────────────────────────────────────────
-  document.querySelectorAll('[id^="step-"]').forEach(stepEl => {
-    const multi = stepEl.id === 'step-categories';
-    stepEl.querySelectorAll('.pref-card').forEach(card => {
-      card.addEventListener('click', () => {
-        if (multi) {
-          card.classList.toggle('selected');
-        } else {
-          stepEl.querySelectorAll('.pref-card').forEach(c => c.classList.remove('selected'));
-          card.classList.add('selected');
-        }
-      });
-    });
-  });
-
-  // ── Validation ─────────────────────────────────────────────────────
-  function validate(stepId) {
-    if (stepId === 'summary') return true;
-    const el = document.getElementById('step-' + stepId);
-    const selected = el.querySelectorAll('.pref-card.selected');
-    if (stepId === 'seat' && selected.length === 0) {
-      showToast('Choose your seat section to continue.', 'error'); return false;
-    }
-    if (stepId === 'categories' && selected.length === 0) {
-      showToast('Pick at least one category.', 'error'); return false;
-    }
-    if ((stepId === 'route' || stepId === 'accessibility') && selected.length === 0) {
-      showToast('Select an option to continue.', 'error'); return false;
-    }
-    return true;
-  }
-
-  // ── Collect state ──────────────────────────────────────────────────
-  function collect(stepId) {
-    const el = document.getElementById('step-' + stepId);
-    if (stepId === 'seat') {
-      const card = el.querySelector('.pref-card.selected');
-      state.seat = card ? card.dataset.value : null;
-    }
-    if (stepId === 'categories') {
-      state.categories = [...el.querySelectorAll('.pref-card.selected')].map(c => c.dataset.value);
-    }
-    if (stepId === 'route') {
-      const card = el.querySelector('.pref-card.selected');
-      state.route = card ? card.dataset.value : null;
-    }
-    if (stepId === 'accessibility') {
-      const card = el.querySelector('.pref-card.selected');
-      state.accessibility = card ? card.dataset.value : null;
-    }
-  }
-
-  // ── Next / Back buttons ────────────────────────────────────────────
-  document.querySelectorAll('.step-next').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const stepId = STEPS[currentStep];
-      if (!validate(stepId)) return;
-      collect(stepId);
-      if (currentStep < STEPS.length - 1) {
-        if (STEPS[currentStep + 1] === 'summary') renderSummary();
-        goToStep(currentStep + 1);
-      }
-    });
-  });
-
-  document.querySelectorAll('.step-back').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (currentStep > 0) goToStep(currentStep - 1);
-    });
-  });
-
-  // ── Summary ────────────────────────────────────────────────────────
-  function renderSummary() {
-    STEPS.forEach(id => collect(id));
-    document.getElementById('sum-seat').textContent = state.seat || '—';
-    document.getElementById('sum-categories').textContent = state.categories.length ? state.categories.join(', ') : '—';
-    document.getElementById('sum-route').textContent = state.route || '—';
-    document.getElementById('sum-accessibility').textContent = state.accessibility || '—';
-  }
-
-  document.getElementById('btn-complete').onclick = () => {
-    showToast('Onboarding complete. Welcome to CrowdPilot AI!');
-    setTimeout(() => {
-      window.location.href = 'dashboard.html';
-    }, 500);
-  };
-</script>
+<script type="module" src="signin.js"></script>
 </body>
 </html>

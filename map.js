@@ -1,4 +1,5 @@
 import { saveToStorage, loadFromStorage, showToast, randomInt, isDemoMode } from './shared.js';
+import { hasGoogleMapsBackend, initializeMap, clearMapOverlays, addStadiumMarker, showCrowdOverlay, drawCustomRoute, getMapInstance } from './services/googleMaps.js';
 
 const CROWD_URL = new URL('data/crowd-data.json', import.meta.url).href;
 const ROUTES_URL = new URL('data/routes-data.json', import.meta.url).href;
@@ -103,20 +104,13 @@ function injectMapStyles() {
 
 function iconForKind(kind) {
   switch (kind) {
-    case 'you':
-      return 'person_pin';
-    case 'food':
-      return 'restaurant';
-    case 'washroom':
-      return 'wc';
-    case 'gate':
-      return 'door_front';
-    case 'parking':
-      return 'local_parking';
-    case 'emergency':
-      return 'emergency';
-    default:
-      return 'place';
+    case 'you':      return 'person_pin';
+    case 'food':     return 'restaurant';
+    case 'washroom': return 'wc';
+    case 'gate':     return 'door_front';
+    case 'parking':  return 'local_parking';
+    case 'emergency':return 'emergency';
+    default:         return 'place';
   }
 }
 
@@ -132,11 +126,11 @@ function pinShell(pin) {
     <div class="glass-panel px-2 py-1 rounded-lg mt-1 text-center whitespace-nowrap"><p class="text-[10px] font-bold text-primary-container">${escapeHtml(pin.label)}</p></div>`;
   }
   const colors = {
-    food: ['bg-tertiary', 'text-black', 'rgba(83,225,111,0.5)'],
-    washroom: ['bg-secondary-container', 'text-black', 'rgba(254,183,0,0.5)'],
-    gate: ['bg-blue-500', 'text-white', 'rgba(59,130,246,0.5)'],
-    parking: ['bg-amber-500', 'text-black', 'rgba(245,158,11,0.5)'],
-    emergency: ['bg-red-600', 'text-white', 'rgba(220,38,38,0.5)'],
+    food:      ['bg-tertiary',           'text-black', 'rgba(83,225,111,0.5)'],
+    washroom:  ['bg-secondary-container','text-black', 'rgba(254,183,0,0.5)'],
+    gate:      ['bg-blue-500',           'text-white', 'rgba(59,130,246,0.5)'],
+    parking:   ['bg-amber-500',          'text-black', 'rgba(245,158,11,0.5)'],
+    emergency: ['bg-red-600',            'text-white', 'rgba(220,38,38,0.5)'],
   };
   const [bg, fg, glow] = colors[k] || ['bg-white/20', 'text-white', 'rgba(255,255,255,0.3)'];
   const pulse = k === 'emergency' ? ' animate-pulse' : '';
@@ -179,10 +173,7 @@ function renderPins(layer, pins, selectedId, onSelect) {
     .join('');
 
   layer.querySelectorAll('.map-pin-el').forEach((el) => {
-    el.addEventListener('click', () => {
-      const id = el.dataset.pinId;
-      onSelect(id);
-    });
+    el.addEventListener('click', () => onSelect(el.dataset.pinId));
     el.addEventListener('mouseenter', (ev) => showPinTooltip(ev, el));
     el.addEventListener('mousemove', (ev) => movePinTooltip(ev));
     el.addEventListener('mouseleave', hidePinTooltip);
@@ -216,7 +207,7 @@ function movePinTooltip(ev) {
   const tip = ensureTooltip();
   const pad = 14;
   tip.style.left = `${Math.min(window.innerWidth - tip.offsetWidth - pad, ev.clientX + pad)}px`;
-  tip.style.top = `${Math.min(window.innerHeight - tip.offsetHeight - pad, ev.clientY + pad)}px`;
+  tip.style.top  = `${Math.min(window.innerHeight - tip.offsetHeight - pad, ev.clientY + pad)}px`;
 }
 
 function hidePinTooltip() {
@@ -234,100 +225,68 @@ function updateRoutePath(pathEl, d, stroke) {
 }
 
 function initMapPanZoom() {
-  const viewport = document.querySelector('#map-viewport');
-  const layer = document.querySelector('#map-transform-layer');
+  // FIX: target the correct wrapper element id used in map.html
+  const viewport = document.querySelector('#svg-map-fallback');
+  const layer    = document.querySelector('#map-transform-layer');
   if (!viewport || !layer) return;
 
-  let scale = 1;
-  let tx = 0;
-  let ty = 0;
-  let rot = 0;
-  const MIN = 1;
-  const MAX = 3.25;
+  let scale = 1, tx = 0, ty = 0, rot = 0;
+  const MIN = 1, MAX = 3.25;
 
   function apply() {
     layer.style.transform = `translate(${tx}px, ${ty}px) scale(${scale}) rotate(${rot}deg)`;
   }
 
-  let drag = false;
-  let lx = 0;
-  let ly = 0;
+  let drag = false, lx = 0, ly = 0;
 
   viewport.addEventListener('pointerdown', (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
-    drag = true;
-    lx = e.clientX;
-    ly = e.clientY;
-    try {
-      viewport.setPointerCapture(e.pointerId);
-    } catch {
-      /* ignore */
-    }
+    drag = true; lx = e.clientX; ly = e.clientY;
+    try { viewport.setPointerCapture(e.pointerId); } catch { /* ignore */ }
   });
 
   viewport.addEventListener('pointermove', (e) => {
     if (!drag) return;
-    tx += e.clientX - lx;
-    ty += e.clientY - ly;
-    lx = e.clientX;
-    ly = e.clientY;
+    tx += e.clientX - lx; ty += e.clientY - ly;
+    lx = e.clientX; ly = e.clientY;
     apply();
   });
 
   const endDrag = (e) => {
     if (!drag) return;
     drag = false;
-    try {
-      viewport.releasePointerCapture(e.pointerId);
-    } catch {
-      /* ignore */
-    }
+    try { viewport.releasePointerCapture(e.pointerId); } catch { /* ignore */ }
   };
   viewport.addEventListener('pointerup', endDrag);
   viewport.addEventListener('pointercancel', endDrag);
 
-  viewport.addEventListener(
-    'wheel',
-    (e) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      const next = Math.min(MAX, Math.max(MIN, scale + delta));
-      const rect = viewport.getBoundingClientRect();
-      const cx = e.clientX - rect.left;
-      const cy = e.clientY - rect.top;
-      const mx = cx - rect.width / 2;
-      const my = cy - rect.height / 2;
-      const factor = next / scale;
-      tx = mx - (mx - tx) * factor;
-      ty = my - (my - ty) * factor;
-      scale = next;
-      apply();
-    },
-    { passive: false },
-  );
+  viewport.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const delta  = e.deltaY > 0 ? -0.1 : 0.1;
+    const next   = Math.min(MAX, Math.max(MIN, scale + delta));
+    const rect   = viewport.getBoundingClientRect();
+    const mx     = (e.clientX - rect.left) - rect.width  / 2;
+    const my     = (e.clientY - rect.top)  - rect.height / 2;
+    const factor = next / scale;
+    tx = mx - (mx - tx) * factor;
+    ty = my - (my - ty) * factor;
+    scale = next;
+    apply();
+  }, { passive: false });
 
   document.querySelector('#map-zoom-in')?.addEventListener('click', () => {
-    scale = Math.min(MAX, scale + 0.22);
-    apply();
+    scale = Math.min(MAX, scale + 0.22); apply();
   });
   document.querySelector('#map-zoom-out')?.addEventListener('click', () => {
     scale = Math.max(MIN, scale - 0.22);
-    if (scale <= MIN + 0.01) {
-      tx = 0;
-      ty = 0;
-    }
+    if (scale <= MIN + 0.01) { tx = 0; ty = 0; }
     apply();
   });
   document.querySelector('#map-recenter')?.addEventListener('click', () => {
-    tx = 0;
-    ty = 0;
-    scale = MIN;
-    rot = 0;
-    apply();
+    tx = 0; ty = 0; scale = MIN; rot = 0; apply();
   });
   document.querySelector('#map-rotate-demo')?.addEventListener('click', () => {
-    rot = (rot - 90) % 360;
-    apply();
+    rot = (rot - 90) % 360; apply();
   });
 }
 
@@ -344,9 +303,9 @@ function crowdScoreLabel(pct) {
 }
 
 const ROUTE_HEADLINE = {
-  fastest: 'Fastest route',
+  fastest:       'Fastest route',
   least_crowded: 'Least crowded route',
-  accessible: 'Accessible route',
+  accessible:    'Accessible route',
 };
 
 function updatePanel(panel, destFood, filterKey, zones) {
@@ -354,15 +313,15 @@ function updatePanel(panel, destFood, filterKey, zones) {
   const r = destFood.routes[filterKey];
   if (!r) return;
   const title = panel.querySelector('.js-map-route-title');
-  const walk = panel.querySelector('.js-map-walk');
-  const dist = panel.querySelector('.js-map-dist');
-  const cong = panel.querySelector('.js-map-congestion');
-  const dens = panel.querySelector('.js-map-crowd-density');
+  const walk  = panel.querySelector('.js-map-walk');
+  const dist  = panel.querySelector('.js-map-dist');
+  const cong  = panel.querySelector('.js-map-congestion');
+  const dens  = panel.querySelector('.js-map-crowd-density');
   if (title) title.textContent = `${ROUTE_HEADLINE[filterKey] || 'Route'} → ${destFood.label}`;
-  if (walk) walk.textContent = `${r.walkMinutes} min`;
-  if (dist) dist.textContent = `${r.distanceM}m`;
-  if (cong) cong.textContent = r.congestion;
-  if (dens) dens.textContent = `${crowdScoreLabel(avgDensity(zones))} (${avgDensity(zones)}%)`;
+  if (walk)  walk.textContent  = `${r.walkMinutes} min`;
+  if (dist)  dist.textContent  = `${r.distanceM}m`;
+  if (cong)  cong.textContent  = r.congestion;
+  if (dens)  dens.textContent  = `${crowdScoreLabel(avgDensity(zones))} (${avgDensity(zones)}%)`;
 }
 
 /**
@@ -373,28 +332,28 @@ function updatePanel(panel, destFood, filterKey, zones) {
  */
 export function initMap(opts = {}) {
   injectMapStyles();
-  const crowdUrl = opts.crowdUrl ?? CROWD_URL;
+  const crowdUrl  = opts.crowdUrl  ?? CROWD_URL;
   const routesUrl = opts.routesUrl ?? ROUTES_URL;
 
   const chipsRoot = document.querySelector('#map-filter-chips');
-  const heatRoot = document.querySelector('#map-heat-zones');
+  const heatRoot  = document.querySelector('#map-heat-zones');
   const pinsLayer = document.querySelector('#map-pins-layer');
-  const pathEl = document.querySelector('#map-route-path');
-  const panels = document.querySelectorAll('[data-route-summary-panel]');
+  const pathEl    = document.querySelector('#map-route-path');
+  const panels    = document.querySelectorAll('[data-route-summary-panel]');
 
   if (!pathEl || !panels.length) return null;
 
   let filterKey = loadFromStorage(KEY_FILTER, 'fastest') || 'fastest';
   if (!CAT_ORDER.includes(filterKey)) filterKey = 'fastest';
 
-  let crowd = { zones: [] };
-  let routesPayload = { destinations: [], mapOverlay: { pins: [], paths: {} } };
-  let selectedPinId = null;
-  let simTimer = null;
+  let crowd          = { zones: [] };
+  let routesPayload  = { destinations: [], mapOverlay: { pins: [], paths: {} } };
+  let selectedPinId  = null;
+  let simTimer       = null;
+  let isMapsAPIActive = false;
+  let activeDestId   = 'food';
 
-  function persistFilter() {
-    saveToStorage(KEY_FILTER, filterKey);
-  }
+  function persistFilter() { saveToStorage(KEY_FILTER, filterKey); }
 
   function handlePinPick(id) {
     selectedPinId = selectedPinId === id ? null : id;
@@ -403,17 +362,106 @@ export function initMap(opts = {}) {
   }
 
   function paint() {
-    const destFood = routesPayload.destinations?.find((d) => d.id === 'food') || routesPayload.destinations?.[0];
-    const paths = routesPayload.mapOverlay?.paths || {};
-    const pathD = paths[filterKey] || paths.fastest || '';
-    const destRoute = destFood?.routes?.[filterKey];
-    const stroke = destRoute?.stroke || '#ff6b00';
+    if (isMapsAPIActive) {
+      paintGoogleMaps();
+      return;
+    }
+    const destSelected = routesPayload.destinations?.find((d) => d.id === activeDestId) || routesPayload.destinations?.[0];
+    const paths    = routesPayload.mapOverlay?.paths || {};
+    const pathD    = paths[filterKey] || paths.fastest || '';
+    const destRoute = destSelected?.routes?.[filterKey];
+    const stroke   = destRoute?.stroke || '#ff6b00';
     updateRoutePath(pathEl, pathD, stroke);
     renderHeatZones(heatRoot, crowd.zones);
     pinTooltipIndex = routesPayload.mapOverlay?.pins || [];
     renderPins(pinsLayer, routesPayload.mapOverlay?.pins, selectedPinId, handlePinPick);
-    panels.forEach((p) => updatePanel(p, destFood, filterKey, crowd.zones));
+    panels.forEach((p) => updatePanel(p, destSelected, filterKey, crowd.zones));
     renderFilterChips(chipsRoot, filterKey);
+  }
+
+  function pctToLatLng(leftPct, topPct) {
+      return { 
+          lat: 40.7512 - (topPct / 100) * 0.0015, 
+          lng: -73.9945 + (leftPct / 100) * 0.0022 
+      };
+  }
+
+  function svgPathToLatLngs(svgStr) {
+      if (!svgStr) return [];
+      const pts = [];
+      const tokens = svgStr.match(/[MQL]\s*([^MQL]+)/g) || [];
+      let currentPt = {x: 0, y: 0};
+      
+      for (const token of tokens) {
+          const type = token[0]; // M, L, or Q
+          const coords = token.substring(1).trim().split(/[\s,]+/).map(Number);
+          
+          if (type === 'M' || type === 'L') {
+              currentPt = {x: coords[0], y: coords[1]};
+              pts.push(pctToLatLng((currentPt.x / 1000) * 100, (currentPt.y / 600) * 100));
+          } else if (type === 'Q') {
+              const cx = coords[0], cy = coords[1];
+              const endX = coords[2], endY = coords[3];
+              // Subdivide quadratic curve into smooth segments
+              for (let t = 0.1; t <= 1; t += 0.1) {
+                  const x = Math.pow(1-t, 2) * currentPt.x + 2*(1-t)*t * cx + Math.pow(t, 2) * endX;
+                  const y = Math.pow(1-t, 2) * currentPt.y + 2*(1-t)*t * cy + Math.pow(t, 2) * endY;
+                  pts.push(pctToLatLng((x / 1000) * 100, (y / 600) * 100));
+              }
+              currentPt = {x: endX, y: endY};
+          }
+      }
+      return pts;
+  }
+
+  function paintGoogleMaps() {
+    const destSelected = routesPayload.destinations?.find((d) => d.id === activeDestId) || routesPayload.destinations?.[0];
+    panels.forEach((p) => updatePanel(p, destSelected, filterKey, crowd.zones));
+    renderFilterChips(chipsRoot, filterKey);
+
+    if (!window.google?.maps) return;
+
+    clearMapOverlays();
+
+    // Custom Stadium Pins
+    routesPayload.mapOverlay?.pins?.forEach(p => {
+       const loc = pctToLatLng(p.leftPct, p.topPct);
+       addStadiumMarker(getMapInstance(), loc.lat, loc.lng, p.label);
+    });
+
+    // Heatmap Overlay
+    const heatmapData = (crowd.zones || []).map(z => {
+       const lay = ZONE_LAYOUT[z.id] || { leftPct: 50, topPct: 50 };
+       const loc = pctToLatLng(lay.leftPct, lay.topPct);
+       return {
+           location: new google.maps.LatLng(loc.lat, loc.lng),
+           weight: z.densityPct
+       };
+    });
+    showCrowdOverlay(heatmapData);
+
+    // Render our proprietary internal physical path via native vector geometry
+    const mePin = routesPayload.mapOverlay?.pins?.find(p => p.id === 'you');
+    const targetPin = routesPayload.mapOverlay?.pins?.find(p => p.kind === destSelected.id);
+    const destRoute = destSelected?.routes?.[filterKey];
+    const strokeColor = destRoute?.stroke || '#ff6b00';
+
+    if (activeDestId === 'food') {
+       const paths = routesPayload.mapOverlay?.paths || {};
+       const pathD = paths[filterKey] || paths.fastest || '';
+       if (pathD) {
+          const routeCoords = svgPathToLatLngs(pathD);
+          drawCustomRoute(routeCoords, strokeColor);
+       }
+    } else if (mePin && targetPin) {
+       // Synthesize a geometric trajectory line to non-food indoor POIs
+       const start = pctToLatLng(mePin.leftPct, mePin.topPct);
+       const end = pctToLatLng(targetPin.leftPct, targetPin.topPct);
+       
+       // Draw a slightly arched path to simulate indoor walking
+       const routeCoords = [start, { lat: (start.lat + end.lat)/2 + 0.0003, lng: (start.lng + end.lng)/2 + 0.0003 }, end];
+       drawCustomRoute(routeCoords, strokeColor);
+    }
   }
 
   function wire() {
@@ -424,21 +472,37 @@ export function initMap(opts = {}) {
       persistFilter();
       paint();
     });
+
+    const poiPanel = document.getElementById('quick-poi-panel');
+    if (poiPanel) {
+      poiPanel.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-dest-id]');
+        if (!btn) return;
+        activeDestId = btn.dataset.destId;
+        paint(); // re-runs entire calculation and line renders natively
+      });
+    }
+
+    document.querySelectorAll('.js-start-navigation').forEach(btn => {
+      btn.addEventListener('click', () => {
+         showToast('Starting optimal navigation sequence...', { type: 'success' });
+      });
+    });
   }
 
   function simulate() {
-    const destFood = routesPayload.destinations?.find((d) => d.id === 'food') || routesPayload.destinations?.[0];
-    if (!destFood?.routes?.[filterKey]) return;
+    const destSelected = routesPayload.destinations?.find((d) => d.id === activeDestId) || routesPayload.destinations?.[0];
+    if (!destSelected?.routes?.[filterKey]) return;
 
     (crowd.zones || []).forEach((z) => {
       z.densityPct = Math.min(98, Math.max(5, (Number(z.densityPct) || 0) + randomInt(-8, 10)));
     });
 
-    const r = destFood.routes[filterKey];
+    const r = destSelected.routes[filterKey];
     const beforeRank = congestionRank(r.congestion);
     if (Math.random() < 0.45) {
       const labels = ['Low', 'Medium', 'Moderate', 'High', 'Critical'];
-      const i = labels.indexOf(r.congestion);
+      const i  = labels.indexOf(r.congestion);
       const ni = i < 0 ? randomInt(0, labels.length - 1) : Math.min(labels.length - 1, Math.max(0, i + randomInt(-1, 1)));
       r.congestion = labels[ni];
     }
@@ -448,18 +512,15 @@ export function initMap(opts = {}) {
     if (afterRank >= 4 && beforeRank < 4) {
       showToast('Your selected route is getting crowded — consider switching filters.', { duration: 4800 });
     }
-
     paint();
   }
 
   function scheduleSim() {
     if (opts.enableSimulation === false || !isDemoMode()) return;
-    simTimer = window.setTimeout(() => {
-      simulate();
-      scheduleSim();
-    }, randomInt(3200, 6200));
+    simTimer = window.setTimeout(() => { simulate(); scheduleSim(); }, randomInt(3200, 6200));
   }
 
+  // Show skeleton while loading
   const firstPanel = panels[0];
   if (firstPanel) {
     const live = document.createElement('div');
@@ -472,34 +533,52 @@ export function initMap(opts = {}) {
   }
 
   Promise.all([
-    fetch(crowdUrl, { cache: 'no-store' }).then((res) => {
-      if (!res.ok) throw new Error(`crowd ${res.status}`);
-      return res.json();
-    }),
-    fetch(routesUrl, { cache: 'no-store' }).then((res) => {
-      if (!res.ok) throw new Error(`routes ${res.status}`);
-      return res.json();
-    }),
+    fetch(crowdUrl,  { cache: 'no-store' }).then((res) => { if (!res.ok) throw new Error(`crowd ${res.status}`);  return res.json(); }),
+    fetch(routesUrl, { cache: 'no-store' }).then((res) => { if (!res.ok) throw new Error(`routes ${res.status}`); return res.json(); }),
   ])
-    .then(([crowdJson, routesJson]) => {
-      crowd = structuredClone(crowdJson);
+    .then(async ([crowdJson, routesJson]) => {
+      crowd         = structuredClone(crowdJson);
       routesPayload = structuredClone(routesJson);
       document.getElementById('map-panel-skeleton')?.remove();
       wire();
-      paint();
-      scheduleSim();
-      initMapPanZoom();
+
+      const hasMapsAPI = await hasGoogleMapsBackend();
+      if (hasMapsAPI) {
+        isMapsAPIActive = true;
+        // ─── FIX 1: Nuke the SVG fallback entirely to prevent ghosting ────────
+        const svgFallback = document.getElementById('svg-map-fallback');
+        if (svgFallback) {
+           svgFallback.remove();
+        }
+
+        // ─── FIX 2: Show Google Maps container BEFORE injecting script ────────
+        const gmContainer = document.getElementById('google-map-container');
+        if (gmContainer) {
+          gmContainer.style.display = 'block'; // reveal — no className clobber
+          initializeMap(gmContainer);           // now has real dimensions
+        }
+        
+        // Let Google Maps load, then begin our interval mapping
+        setTimeout(() => {
+           paint();
+           scheduleSim();
+        }, 1500);
+
+      } else {
+        // Fallback: use local SVG map + simulation
+        paint();
+        scheduleSim();
+        initMapPanZoom();
+      }
     })
-    .catch(() => {
+    .catch((err) => {
+      console.error('[CrowdPilot] Map data load failed:', err);
       document.getElementById('map-panel-skeleton')?.remove();
       showToast('Could not load map data. Check your connection and refresh.', { duration: 5000, type: 'error' });
     });
 
   return {
-    stop() {
-      if (simTimer) clearTimeout(simTimer);
-      simTimer = null;
-    },
+    stop() { if (simTimer) clearTimeout(simTimer); simTimer = null; },
     getState: () => ({ filterKey, selectedPinId }),
   };
 }
