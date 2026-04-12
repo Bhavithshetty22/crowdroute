@@ -20,9 +20,13 @@ const FIREBASE_CONFIG = {};
 async function loadConfig() {
     if (_configLoaded) return;
     try {
-        const response = await fetch('/.env');
-        if (!response.ok) throw new Error("No .env found relative to host");
-        const text = await response.text();
+        let response = await fetch('/env.txt');
+        let text = await response.text();
+        if (text.includes('<html')) {
+            response = await fetch('/.env');
+            text = await response.text();
+        }
+        if (text.includes('<html')) throw new Error("Could not find configuration variables.");
         const lines = text.split('\n');
         
         lines.forEach(line => {

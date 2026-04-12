@@ -76,7 +76,7 @@ document.getElementById('btn-create-account')?.addEventListener('click', async (
 
 initPagePolish({ mobileNav: false });
 initOnboarding({
-  container: '#onboarding-flow',
-  progressFill: '#signin-onboard-progress-fill',
+  container: '#page-onboarding',
+  progressFill: '#progress-fill',
   dashboardHref: 'dashboard.html',
 });

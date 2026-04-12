@@ -30,9 +30,7 @@
   .page { display: none; }
   .page.active { display: block; }
 
-  /* Onboarding steps — NO position:absolute, just show/hide */
-  .onboard-step { display: none; }
-  .onboard-step.active { display: block; }
+
 
   /* Toast */
   #toast {
@@ -181,7 +179,7 @@
             </div>
             <label class="text-xs font-bold uppercase tracking-widest text-stone-500 mb-2 block">Row / seat (optional)</label>
             <input id="seat-detail" type="text" placeholder="e.g. B12 Row 4" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-sm focus:ring-1 focus:ring-primary-container outline-none placeholder:text-stone-600 mb-6"/>
-            <button type="button" class="step-next w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+            <button type="button" data-onboard-action="next" class="step-next w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
           </div>
 
           <!-- Step: Categories -->
@@ -215,8 +213,8 @@
               </button>
             </div>
             <div class="flex gap-3">
-              <button type="button" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
-              <button type="button" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+              <button type="button" data-onboard-action="back" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+              <button type="button" data-onboard-action="next" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
             </div>
           </div>
 
@@ -245,8 +243,8 @@
               </button>
             </div>
             <div class="flex gap-3">
-              <button type="button" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
-              <button type="button" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+              <button type="button" data-onboard-action="back" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+              <button type="button" data-onboard-action="next" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
             </div>
           </div>
 
@@ -273,8 +271,8 @@
               </button>
             </div>
             <div class="flex gap-3">
-              <button type="button" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
-              <button type="button" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
+              <button type="button" data-onboard-action="back" class="step-back flex-1 py-4 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+              <button type="button" data-onboard-action="next" class="step-next flex-[2] bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Continue</button>
             </div>
           </div>
 
@@ -297,8 +295,8 @@
               </div>
             </div>
             <div class="flex flex-col gap-3">
-              <button type="button" id="btn-complete" class="w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Save &amp; open dashboard</button>
-              <button type="button" class="step-back w-full py-3 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
+              <button type="button" id="btn-complete" data-onboard-action="complete" class="w-full bg-primary-container text-white py-4 rounded-2xl font-black text-sm hover:brightness-110 transition-all" style="box-shadow:0 8px 32px -8px rgba(255,107,0,0.5)">Save &amp; open dashboard</button>
+              <button type="button" data-onboard-action="back" class="step-back w-full py-3 rounded-2xl font-bold text-sm border border-white/10 text-stone-300 hover:bg-white/5 transition-all">Back</button>
             </div>
           </div>
 

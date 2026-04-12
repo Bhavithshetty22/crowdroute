@@ -15,11 +15,39 @@
 // Configuration — replace with import.meta.env.VITE_GOOGLE_MAPS_KEY or
 // process.env.GOOGLE_MAPS_API_KEY as appropriate for your bundler.
 // ---------------------------------------------------------------------------
-const MAPS_CONFIG = {
+let MAPS_CONFIG = {
     apiKey: import.meta.env?.VITE_GOOGLE_MAPS_KEY
         ?? (typeof process !== 'undefined' ? process.env?.GOOGLE_MAPS_API_KEY : undefined)
         ?? 'AIzaSyARfpvIP71u0H6dplaK0CXR9b33CnVbiio', // fallback for local dev
 };
+
+let _configLoaded = false;
+async function loadConfig() {
+    if (_configLoaded) return;
+    try {
+        let response = await fetch('/env.txt');
+        let text = await response.text();
+        if (text.includes('<html')) {
+            response = await fetch('/.env');
+            text = await response.text();
+        }
+        if (text.includes('<html')) throw new Error();
+        
+        const lines = text.split('\n');
+        lines.forEach(line => {
+            if (line.includes('=')) {
+                const parts = line.split('=');
+                if (parts[0].trim() === 'GOOGLE_MAPS_API_KEY') {
+                    MAPS_CONFIG.apiKey = parts.slice(1).join('=').trim().replace(/["']/g, '');
+                }
+            }
+        });
+        _configLoaded = true;
+    } catch(err) {
+        console.warn("[Google Maps] Falling back to default local config.");
+        _configLoaded = true;
+    }
+}
 
 // MSG default center
 const DEFAULT_CENTER = { lat: 40.7505, lng: -73.9934 };
@@ -47,6 +75,7 @@ let _mapInstance = null;
  * @returns {Promise<boolean>}
  */
 export async function hasGoogleMapsBackend() {
+    await loadConfig();
     return Boolean(MAPS_CONFIG.apiKey);
 }
 
@@ -58,11 +87,13 @@ export async function hasGoogleMapsBackend() {
  *
  * @param {HTMLElement} containerElement
  */
-export function initializeMap(containerElement) {
+export async function initializeMap(containerElement) {
     if (!containerElement) {
         console.warn('[Google Maps] initializeMap called with null container.');
         return;
     }
+
+    await loadConfig();
 
     // FIX: If the Maps JS is already constructor-ready, render immediately
     if (window.google?.maps?.Map) {
@@ -117,7 +148,6 @@ function renderMap(containerElement) {
     const map = new google.maps.Map(containerElement, {
         center: DEFAULT_CENTER,
         zoom: DEFAULT_ZOOM,
-        mapId: 'DEMO_MAP_ID',
         disableDefaultUI: true,
         backgroundColor: '#0e0e0e',
         // FIX: apply dark theme — without this the map renders with a white/light
