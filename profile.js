@@ -7,9 +7,7 @@ import {
   LS_GEMINI_API_KEY,
 } from './shared.js';
 import { getSavedRoutes, removeSavedRouteById } from './routes.js';
-import { hasGeminiBackend } from './services/gemini.js';
-import { hasFirebaseBackend } from './services/firebase.js';
-import { hasGoogleMapsBackend } from './services/googleMaps.js';
+import { checkGeminiStatus, checkFirebaseStatus, checkGoogleMapsStatus } from './services/status.js';
 
 /** Same keys as onboarding.js */
 const ONBOARD = {
@@ -495,12 +493,15 @@ export function initProfile(opts = {}) {
     applyAvatarFromStorage();
     const statusEl = document.querySelector('#profile-gemini-status');
     if (statusEl) {
-      hasGeminiBackend().then(isConnected => {
-        if (isConnected) {
-          statusEl.textContent = 'Gemini Connected';
+      checkGeminiStatus().then(status => {
+        if (status === 'connected') {
+          statusEl.textContent = 'Connected';
           statusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-tertiary/20 text-tertiary';
+        } else if (status === 'partially connected') {
+          statusEl.textContent = 'Partially Connected';
+          statusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-400';
         } else {
-          statusEl.textContent = 'Gemini Not Available';
+          statusEl.textContent = 'Not Connected';
           statusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400';
         }
       });
@@ -508,12 +509,15 @@ export function initProfile(opts = {}) {
 
     const fbStatusEl = document.querySelector('#profile-firebase-status');
     if (fbStatusEl) {
-      hasFirebaseBackend().then(isConnected => {
-        if (isConnected) {
-          fbStatusEl.textContent = 'Firebase Connected';
+      checkFirebaseStatus().then(status => {
+        if (status === 'connected') {
+          fbStatusEl.textContent = 'Connected';
           fbStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-tertiary/20 text-tertiary';
+        } else if (status === 'partially connected') {
+          fbStatusEl.textContent = 'Partially Connected';
+          fbStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-400';
         } else {
-          fbStatusEl.textContent = 'Not Configured';
+          fbStatusEl.textContent = 'Not Connected';
           fbStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400';
         }
       });
@@ -521,12 +525,15 @@ export function initProfile(opts = {}) {
 
     const mapStatusEl = document.querySelector('#profile-maps-status');
     if (mapStatusEl) {
-      hasGoogleMapsBackend().then(isConnected => {
-        if (isConnected) {
-          mapStatusEl.textContent = 'Maps Connected';
+      checkGoogleMapsStatus().then(status => {
+        if (status === 'connected') {
+          mapStatusEl.textContent = 'Connected';
           mapStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-tertiary/20 text-tertiary';
+        } else if (status === 'partially connected') {
+          mapStatusEl.textContent = 'Partially Connected';
+          mapStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-400/20 text-yellow-400';
         } else {
-          mapStatusEl.textContent = 'Not Configured';
+          mapStatusEl.textContent = 'Not Connected';
           mapStatusEl.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-stone-400';
         }
       });

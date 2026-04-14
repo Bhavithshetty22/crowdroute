@@ -11,10 +11,11 @@
 <meta property="og:type" content="website"/>
 <meta property="og:image" content="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1200&amp;q=80"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script defer src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="shared.css"/>
+<link rel="preload" href="shared.css" as="style">
+    <link rel="stylesheet" href="shared.css">
 <script id="tailwind-config">
   tailwind.config = {
     darkMode: "class",
@@ -117,7 +118,7 @@
 <!-- HERO -->
 <section id="main-content" class="relative min-h-screen flex items-center overflow-hidden" tabindex="-1">
   <div class="absolute inset-0 z-0">
-    <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1920&q=80" class="w-full h-full object-cover opacity-25 scale-105" alt="Stadium packed with fans"/>
+    <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1920&q=80" class="w-full h-full object-cover opacity-25 scale-105" alt="Stadium packed with fans"/>
     <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black"></div>
     <div class="absolute inset-0 hero-glow"></div>
   </div>
@@ -248,7 +249,7 @@
         </a>
       </div>
       <div class="glass-card rounded-3xl overflow-hidden relative aspect-square group">
-        <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80" class="w-full h-full object-cover opacity-70 group-hover:scale-105 glide" alt="Stadium map heatmap"/>
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&q=80" class="w-full h-full object-cover opacity-70 group-hover:scale-105 glide" alt="Stadium map heatmap"/>
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         <!-- Heatmap overlay dots -->
         <div class="absolute top-1/4 left-1/4 w-16 h-16 bg-red-500/40 rounded-full blur-xl animate-pulse"></div>
@@ -262,7 +263,7 @@
     <!-- Feature 2 -->
     <div class="grid lg:grid-cols-2 gap-20 items-center">
       <div class="order-2 glass-card rounded-3xl overflow-hidden relative aspect-square group">
-        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" class="w-full h-full object-cover opacity-60 group-hover:scale-105 glide" alt="Smart route navigation"/>
+        <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80" class="w-full h-full object-cover opacity-60 group-hover:scale-105 glide" alt="Smart route navigation"/>
         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
         <div class="absolute inset-x-6 bottom-6 glass-panel p-5 rounded-2xl">
           <p class="text-xs text-stone-500 uppercase tracking-widest font-bold mb-2">AI Recommendation</p>

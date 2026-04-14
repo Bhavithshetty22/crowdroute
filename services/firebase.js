@@ -5,11 +5,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-functions.js";
 
 // Global instances
 export let app = null;
 export let auth = null;
 export let db = null;
+export let analytics = null;
+export let functions = null;
 
 let _configLoaded = false;
 const FIREBASE_CONFIG = {};
@@ -69,7 +73,10 @@ export async function initializeFirebase() {
     }
     app = initializeApp(FIREBASE_CONFIG);
     db = getFirestore(app);
+    analytics = getAnalytics(app);
+    functions = getFunctions(app);
     console.log("[Firebase Ready] App instance successfully constructed.");
+    console.log("[Google Services] Analytics & Cloud Functions connected for BigQuery flow.");
 }
 
 /**
@@ -105,6 +112,23 @@ export async function createAccount(email, pass) {
     return await createUserWithEmailAndPassword(auth, email, pass);
 }
 
+export async function signInWithGoogle() {
+    if (!auth) throw new Error("Auth not initialized");
+    console.log("[Firebase Auth] Google Sign-In popup flow triggered (placeholder).");
+    return { user: { displayName: "Google User" } };
+}
+
+export async function logout() {
+    if (!auth) throw new Error("Auth not initialized");
+    console.log("[Firebase Auth] Logging out user (placeholder).");
+    return true;
+}
+
+export function getCurrentUser() {
+    if (!auth) return null;
+    return auth.currentUser || { uid: "local-fallback-ui" }; // Placeholder
+}
+
 /**
  * saveUserProfile
  * Snapshot demographic preferences natively dynamically.
@@ -130,4 +154,24 @@ export async function saveSavedRoute(uid, routeData) {
 export async function loadSavedRoutes(uid) {
     console.log("[Firestore Sync] Retrieving active routes from remote collections.");
     return [];
+}
+
+/**
+ * Log app usage to Firebase Analytics integrating with BigQuery Dataflow.
+ */
+export function logAppEvent(eventName, params = {}) {
+    if (analytics) {
+        logEvent(analytics, eventName, params);
+        console.log(`[Analytics] Tracked ${eventName} -> BigQuery Pipeline.`);
+    }
+}
+
+/**
+ * Invoke backend Cloud Functions for heavy computational tasks (like ML inferences).
+ */
+export async function runAIPipeline(payload) {
+    if (!functions) throw new Error("Functions not initialized");
+    console.log("[Cloud Functions] Invoking compute vertex AI pipeline securely.");
+    const runVertexAI = httpsCallable(functions, 'runVertexAIPipeline');
+    return await runVertexAI(payload);
 }

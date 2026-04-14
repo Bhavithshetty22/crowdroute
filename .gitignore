@@ -1,22 +1,5 @@
-# Environment Variables
+node_modules
 .env
-.env.*
-!.env.example
-
-# Dependencies
-node_modules/
-
-# Logs
+dist
+coverage
 logs
-*.log
-npm-debug.log*
-
-# Editor and System files
-.DS_Store
-.vscode/
-.idea/
-
-# Build artifacts
-dist/
-build/
-coverage/

@@ -30,10 +30,10 @@
  */
 export async function hasGeminiBackend() {
     try {
-        const res = await fetch('/api/gemini/status', { method: 'GET' });
-        return res.ok;
+        const res = await fetch('/api/status', { method: 'GET' });
+        const data = await res.json();
+        return data.gemini === true;
     } catch {
-        // If the backend fails or doesn't exist, this safely returns false
         return false;
     }
 }

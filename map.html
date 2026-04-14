@@ -10,10 +10,11 @@
 <meta property="og:description" content="Interactive crowd heatmap, route overlays, and live density."/>
 <meta property="og:type" content="website"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script defer src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="shared.css"/>
+<link rel="preload" href="shared.css" as="style">
+    <link rel="stylesheet" href="shared.css">
 <script id="tailwind-config">
   tailwind.config = { darkMode:"class", theme:{ extend:{ colors:{ "primary":"#ffb693","primary-container":"#ff6b00","secondary":"#ffdb9d","secondary-container":"#feb700","tertiary":"#53e16f","error":"#ffb4ab","error-container":"#93000a","surface-container-lowest":"#0e0e0e","surface-container-low":"#1c1b1b","surface-container":"#201f1f","surface-container-high":"#2a2a2a","on-surface":"#e5e2e1","background":"#0e0e0e" }, fontFamily:{ headline:["Space Grotesk"], body:["Inter"] } } } };
 </script>
@@ -134,7 +135,7 @@
       <div id="svg-map-fallback" class="absolute inset-0 overflow-hidden z-0 cursor-grab active:cursor-grabbing touch-none">
         <div id="map-transform-layer" class="absolute left-0 top-0 w-full h-full origin-center" style="transform: translate(0px, 0px) scale(1); will-change: transform">
           <!-- Base map image -->
-          <img src="https://images.unsplash.com/photo-1524117074681-31bd4de22ad3?w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale brightness-75 pointer-events-none select-none" draggable="false" alt="Stadium aerial view"/>
+          <img loading="lazy" decoding="async" src="https://images.unsplash.com/photo-1524117074681-31bd4de22ad3?w=1200&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale brightness-75 pointer-events-none select-none" draggable="false" alt="Stadium aerial view"/>
           <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30 pointer-events-none"></div>
 
           <!-- Heat zones -->

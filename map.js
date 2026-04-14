@@ -1,5 +1,6 @@
 import { saveToStorage, loadFromStorage, showToast, randomInt, isDemoMode } from './shared.js';
-import { hasGoogleMapsBackend, initializeMap, clearMapOverlays, addStadiumMarker, showCrowdOverlay, drawCustomRoute, getMapInstance } from './services/googleMaps.js';
+import { initializeMap, clearMapOverlays, addStadiumMarker, showCrowdOverlay, drawCustomRoute, getMapInstance } from './services/googleMaps.js';
+import { checkGoogleMapsStatus } from './services/status.js';
 
 const CROWD_URL = new URL('data/crowd-data.json', import.meta.url).href;
 const ROUTES_URL = new URL('data/routes-data.json', import.meta.url).href;
@@ -542,7 +543,8 @@ export function initMap(opts = {}) {
       document.getElementById('map-panel-skeleton')?.remove();
       wire();
 
-      const hasMapsAPI = await hasGoogleMapsBackend();
+      const mapStatus = await checkGoogleMapsStatus();
+      const hasMapsAPI = mapStatus === 'connected';
       if (hasMapsAPI) {
         isMapsAPIActive = true;
         // ─── FIX 1: Nuke the SVG fallback entirely to prevent ghosting ────────

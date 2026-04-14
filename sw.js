@@ -43,6 +43,16 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  // Remove outdated caches logic
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((name) => {
+          if (name !== CACHE_NAME) return caches.delete(name);
+        })
+      );
+    })
+  );
   event.waitUntil(self.clients.claim());
 });
 
@@ -63,16 +73,20 @@ self.addEventListener('fetch', (event) => {
 
   if (!isAsset) return;
 
+  // Stale-while-revalidate caching strategy
   event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request).then((res) => {
-        if (res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+    caches.match(request).then((cachedResponse) => {
+      const networkFetch = fetch(request).then((networkResponse) => {
+        if (networkResponse.ok) {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         }
-        return res;
+        return networkResponse;
+      }).catch(() => {
+        // Offline fallback logic handled gracefully
+        return cachedResponse;
       });
-    }),
+      return cachedResponse || networkFetch;
+    })
   );
 });
