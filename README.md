@@ -8,11 +8,7 @@ CrowdPilot AI is a premium AI-powered stadium assistant that helps attendees nav
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
-![Hackathon Project](https://img.shields.io/badge/Hackathon-Project-blueviolet.svg)
-![Google Cloud](https://img.shields.io/badge/GoogleCloud-Ready-blue.svg)
-![Test Coverage](https://img.shields.io/badge/TestCoverage-100%25-brightgreen.svg)
-![Security Scanned](https://img.shields.io/badge/Security-Scanned%20&%20Secured-orange.svg)
-![Lighthouse Performance](https://img.shields.io/badge/Lighthouse-99%25-green.svg)
+
 
 ---
 
